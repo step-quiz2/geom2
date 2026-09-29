@@ -14,6 +14,9 @@
     2. Les 130 preguntes, en mode CLAR i en mode FOSC: es revelen les quatre
        pistes, totes les imatges carreguen (naturalWidth > 0), el peu
        (comprovació + "i després") es veu, i no hi ha cap error de JavaScript.
+       La fitxa impresa no baixa cap figura fins que es prem "Imprimeix la
+       fitxa", i llavors totes carreguen. El mode projector entra i surt
+       sense tancar les pistes obertes.
     3. Les pàgines de solucions/: carreguen, amb estil i amb totes les imatges.
     4. sol.html i eina-frases.html s'obren sense errors.
     +  Cap pàgina no fa cap petició a internet (el test talla la xarxa).
@@ -87,6 +90,10 @@ async function esperaImatges(p) {
     await senseXarxa(ctx, etiqueta);
     // Visitant que ja ha vist la intro: que no se'l redirigeixi a #demo.
     await ctx.addInitScript(() => { try { localStorage.setItem('geo:demo-intro-mostrada', '1'); } catch (e) {} });
+    // El botó "Imprimeix la fitxa" es prem a cada pregunta (carrega les
+    // figures de la fitxa, que es comproven com les altres); el diàleg
+    // d'impressió real se substitueix per un comptador.
+    await ctx.addInitScript(() => { window.print = () => { window.__impressions = (window.__impressions || 0) + 1; }; });
     const p = await novaPagina(ctx, errorsJS, etiqueta);
 
     on = scheme + ' #llista';
@@ -113,6 +120,11 @@ async function esperaImatges(p) {
         if (!boto) break;
         await boto.click();
       }
+      // Abans d'imprimir, la fitxa no ha de baixar cap figura (data-src).
+      const fitxaAmbSrc = await p.evaluate(() => document.querySelectorAll('.fitxa-impresa img[src]').length);
+      if (fitxaAmbSrc) problemes.push(on + ': la fitxa impresa baixa ' + fitxaAmbSrc + ' figures sense imprimir');
+      const imprimeix = await p.$('.detall-eines__boto:not(.detall-eines__projector)');
+      if (imprimeix) await imprimeix.click();
       const trencades = await esperaImatges(p);
       const r = await p.evaluate(() => {
         const peu = document.querySelector('.guia__footer');
@@ -128,6 +140,34 @@ async function esperaImatges(p) {
       if (!r.peu) problemes.push(on + ': el peu de la guia no es veu');
     }
     resum.push(scheme + ': ' + ids.length + ' preguntes, ' + imatges + ' imatges');
+    const impressions = await p.evaluate(() => window.__impressions || 0);
+    if (!impressions) problemes.push(scheme + ': el botó "Imprimeix la fitxa" no arriba a imprimir');
+
+    // Mode projector: entrar-hi i sortir-ne no ha de tancar les pistes
+    // obertes ni repintar la pregunta.
+    on = scheme + ' mode projector';
+    await p.evaluate((h) => { location.hash = h; }, ids[0]);
+    await p.waitForTimeout(60);
+    for (let i = 0; i < 2; i++) {
+      const boto = await p.$('.guia__reveal:not([hidden])');
+      if (boto) await boto.click();
+    }
+    const abans = await p.evaluate(() => document.querySelectorAll('.guia__step').length);
+    await p.click('.detall-eines__projector');
+    await p.waitForTimeout(100);
+    const dins = await p.evaluate(() => ({
+      classe: document.documentElement.classList.contains('mode-projector'),
+      pistes: document.querySelectorAll('.guia__step').length,
+    }));
+    await p.keyboard.press('Escape');
+    await p.waitForTimeout(100);
+    const fora = await p.evaluate(() => ({
+      classe: document.documentElement.classList.contains('mode-projector'),
+      pistes: document.querySelectorAll('.guia__step').length,
+    }));
+    if (!dins.classe || fora.classe) problemes.push(on + ': no entra o no surt del mode');
+    if (dins.pistes !== abans || fora.pistes !== abans)
+      problemes.push(on + ': les pistes obertes (' + abans + ') no es mantenen (' + dins.pistes + ', ' + fora.pistes + ')');
     await ctx.close();
   }
 

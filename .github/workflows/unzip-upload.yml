@@ -78,7 +78,8 @@ jobs:
       - name: 1b. Optimitza sense pèrdua els PNG nous o canviats
         run: |
           pip install -q pyoxipng pillow numpy
-          CANVIATS=$( (git diff --name-only HEAD; git ls-files --others --exclude-standard) \
+          # --diff-filter=d: els PNG que un _ESBORRA.txt ha esborrat no s'optimitzen.
+          CANVIATS=$( (git diff --name-only --diff-filter=d HEAD; git ls-files --others --exclude-standard) \
                       | grep -E '^assets/img/.*\.png$' || true)
           if [ -n "$CANVIATS" ]; then python3 optimitza_png.py $CANVIATS; else echo "cap PNG nou"; fi
 

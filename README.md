@@ -222,15 +222,19 @@ vista de detall ofereix com a "veure també"). Les 12 preguntes d'
   figura grans, sense capçalera ni navegació. Es porta amb el teclat o amb un
   passador de diapositives: **→ / espai / PageDown** revela la pista següent i,
   quan ja són totes obertes, passa a la pregunta següent; **← / PageUp** torna
-  a la pregunta anterior; **Esc** surt.
+  a la pregunta anterior; **Esc** surt. Entrar-hi o sortir-ne no tanca les
+  pistes que ja estaven obertes.
 - **Imprimeix la fitxa** (botó a cada pregunta, o Ctrl+P): al paper surten
   l'enunciat, la figura i la guia sencera —les quatre pistes amb les seves
   figures, la comprovació i l'"i després"—, sigui quina sigui la pista a què
   s'ha arribat a la pantalla, i sempre en negre sobre blanc (també si el
-  dispositiu és en mode fosc).
+  dispositiu és en mode fosc). Les figures de les pistes només es baixen en
+  el moment d'imprimir (botó o Ctrl+P), no cada cop que s'obre una pregunta.
+  Des del menú del navegador (Fitxer → Imprimeix) potser no arriben a temps:
+  millor el botó.
 
 Codi a `js/ui/llista.js` (cerca) i `js/ui/detall.js` (`pintaEines`,
-`commutaProjector`, `pintaFitxaImpresa`); estils al final de
+`commutaProjector`, `ajustaAlcada`, `pintaFitxaImpresa`, `imprimeix`); estils al final de
 `css/components.css`.
 
 ### Prova escrita a partir del que s'ha explorat

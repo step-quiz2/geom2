@@ -79,17 +79,17 @@ def calcula():
         nou = RE_SOL.sub(lambda m: m.group(1) + "?v=" + v_sol, nou)
         nou = RE_FONTS.sub(lambda m: m.group(1) + "?v=" + v_fonts, nou)
         res[rel] = (txt, nou)
-    return res, v_lloc, v_sol
+    return res, v_lloc, v_sol, v_fonts
 
 
 def comprova():
     """Llista dels HTML amb algun ?v= que no correspon al contingut actual."""
-    res, _, _ = calcula()
+    res, _, _, _ = calcula()
     return [rel for rel, (vell, nou) in res.items() if vell != nou]
 
 
 def main():
-    res, v_lloc, v_sol = calcula()
+    res, v_lloc, v_sol, v_fonts = calcula()
     canviats = [rel for rel, (vell, nou) in res.items() if vell != nou]
     if "--comprova" in sys.argv:
         if canviats:
@@ -101,8 +101,8 @@ def main():
     for rel in canviats:
         with open(os.path.join(BASE, rel), "w", encoding="utf-8") as f:
             f.write(res[rel][1])
-    print("✓ ?v=%s (tokens/base/components), ?v=%s (sol.css) — %d fitxers actualitzats"
-          % (v_lloc, v_sol, len(canviats)))
+    print("✓ ?v=%s (tokens/base/components), ?v=%s (sol.css), ?v=%s (fonts.css) — %d fitxers actualitzats"
+          % (v_lloc, v_sol, v_fonts, len(canviats)))
 
 
 if __name__ == "__main__":

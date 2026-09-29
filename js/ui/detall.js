@@ -152,22 +152,44 @@
     // i onload la substitueix per l'alçada real d'aquesta figura
     // concreta, amb el mateix sostre de sempre (480px / 52vh) perquè
     // una figura molt alta tampoc envaeixi tota la pantalla.
-    img.addEventListener("load", () => {
-      if (!img.naturalWidth || !img.naturalHeight) return; // salvaguarda: mai dividir per 0
-      const amplada = frame.clientWidth || figure.clientWidth;
-      if (!amplada) return;
-      const alcadaReal = amplada * (img.naturalHeight / img.naturalWidth);
-      figure.style.setProperty(
-        "--figure-slot-h",
-        "clamp(120px, " + Math.round(alcadaReal) + "px, var(--figure-slot-h-max))"
-      );
-    });
+    //
+    // L'alçada depèn de l'amplada, i l'amplada canvia en entrar o sortir del
+    // mode projector o en girar/redimensionar la finestra: per això el
+    // càlcul viu a part (ajustaAlcada) i recalculaFigures() el torna a fer
+    // per a totes les figures de la pàgina sense haver de repintar-la.
+    img.addEventListener("load", () => ajustaAlcada(figure));
 
     frame.appendChild(img);
     figure.appendChild(frame);
 
     return figure;
   }
+
+  /** Fixa --figure-slot-h d'una figura segons el ratio real de la imatge i
+   *  l'amplada que ocupa ARA. No fa res si la imatge encara no ha carregat. */
+  function ajustaAlcada(figure) {
+    const frame = figure.querySelector(".question-entry__figure-frame");
+    const img = figure.querySelector("img");
+    if (!img || !img.naturalWidth || !img.naturalHeight) return; // salvaguarda: mai dividir per 0
+    const amplada = (frame && frame.clientWidth) || figure.clientWidth;
+    if (!amplada) return;
+    const alcadaReal = amplada * (img.naturalHeight / img.naturalWidth);
+    figure.style.setProperty(
+      "--figure-slot-h",
+      "clamp(120px, " + Math.round(alcadaReal) + "px, var(--figure-slot-h-max))"
+    );
+  }
+
+  function recalculaFigures() {
+    document.querySelectorAll(".question-entry__figure").forEach(ajustaAlcada);
+  }
+
+  // Girar el mòbil o canviar la mida de la finestra també canvia l'amplada.
+  let esperaResize = 0;
+  window.addEventListener("resize", () => {
+    cancelAnimationFrame(esperaResize);
+    esperaResize = requestAnimationFrame(recalculaFigures);
+  });
 
   /**
    * Pinta el bloc d'imatge(s) de la pregunta: cap, una, o dues (cas
@@ -805,7 +827,7 @@
     imp.className = "detall-eines__boto";
     imp.textContent = window.t("detail.print");
     imp.title = window.t("detail.print_note");
-    imp.addEventListener("click", () => window.print());
+    imp.addEventListener("click", imprimeix);
     eines.appendChild(imp);
 
     const ajuda = document.createElement("p");
@@ -848,10 +870,11 @@
         document.exitFullscreen().catch(() => {});
       }
     } catch (e) { /* sense pantalla completa: el mode funciona igual */ }
-    // Es torna a pintar la pregunta perquè la figura recalculi la seva alçada
-    // amb l'amplada nova (v. creaFigura). Com qualsevol navegació, la guia
-    // torna a començar per la primera pista: a la pissarra és el que es vol.
-    window.dispatchEvent(new HashChangeEvent("hashchange"));
+    // La figura recalcula la seva alçada amb l'amplada nova (v. ajustaAlcada)
+    // quan el navegador ja ha aplicat els estils del mode. NO es torna a
+    // pintar la pregunta: així les pistes ja obertes continuen obertes i no
+    // es registra una visita nova a l'itinerari.
+    requestAnimationFrame(recalculaFigures);
   }
 
   // Sortir de la pantalla completa amb Esc (que el navegador gestiona ell
@@ -898,6 +921,40 @@
    * (css: .fitxa-impresa), i no l'escala interactiva: així imprimir no
    * obre cap pista a la pantalla de ningú, i la fitxa surt sempre igual.
    */
+  function preparaFitxa() {
+    const imgs = Array.from(document.querySelectorAll(".fitxa-impresa img"));
+    imgs.forEach((img) => {
+      if (img.dataset.src) { img.src = img.dataset.src; delete img.dataset.src; }
+    });
+    const carregues = imgs.map((img) => img.complete ? null : new Promise((fet) => {
+      img.addEventListener("load", fet, { once: true });
+      img.addEventListener("error", fet, { once: true });
+    }));
+    // Sostre de 8 s: si una figura no arriba, s'imprimeix igualment.
+    return Promise.race([
+      Promise.all(carregues),
+      new Promise((fet) => setTimeout(fet, 8000)),
+    ]);
+  }
+
+  /** Imprimeix la fitxa amb totes les figures ja carregades. */
+  function imprimeix() {
+    preparaFitxa().then(() => window.print());
+  }
+
+  // Ctrl+P / Cmd+P a una pregunta passa pel mateix camí que el botó, perquè
+  // les figures de les pistes surtin segur al paper.
+  document.addEventListener("keydown", (e) => {
+    if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
+    if ((e.key || "").toLowerCase() !== "p") return;
+    if (!document.querySelector(".fitxa-impresa")) return;
+    e.preventDefault();
+    imprimeix();
+  });
+  // Imprimir des del menú del navegador no passa per aquí abans: es demanen
+  // les figures igualment, però potser no arriben a temps per al paper.
+  window.addEventListener("beforeprint", preparaFitxa);
+
   function pintaFitxaImpresa(pregunta, lang, contenidor) {
     if (!window.geoGuies || !window.geoGuies.teGuia(pregunta)) return;
     const guia = window.geoGuies.guiaDe(pregunta);
@@ -928,7 +985,11 @@
         const fig = document.createElement("figure");
         fig.className = "guia__figure";
         const img = document.createElement("img");
-        img.src = window.geoGuies.rutaFigura(pista.figura);
+        // data-src, no src: la fitxa no es veu mai en pantalla, i amb src
+        // cada pregunta baixaria les figures de les quatre pistes encara
+        // que ningú no imprimeixi res (un mòbil amb poques dades ho nota).
+        // preparaFitxa() les carrega just abans d'imprimir.
+        img.dataset.src = window.geoGuies.rutaFigura(pista.figura);
         img.alt = "";
         fig.appendChild(img);
         bloc.appendChild(fig);
