@@ -25,11 +25,11 @@ mòbil a la mateixa xarxa), qualsevol servidor estàtic funciona igual de bé:
 
 ## Què hi ha, i què no
 
-**Hi ha:** 130 preguntes amb el seu enunciat original en anglès **i en català** (traduït); **122 de 130 amb una imatge d'enunciat**; **les 130 amb la
+**Hi ha:** 130 preguntes amb el seu enunciat original en anglès **i en català** (traduït); **125 de 130 amb una imatge d'enunciat**; **les 130 amb la
 seva guia de demostració completa**; navegació entre preguntes; un marcador personal
 "explorat" que es desa al navegador; un itinerari reactiu amb suggeriments
 personalitzats **i sis itineraris temàtics fixos**; un
-glossari de 53 termes (**tots 53 amb figura pròpia**) amb detecció automàtica de termes dins
+glossari de 56 termes (**tots 56 amb figura pròpia**) amb detecció automàtica de termes dins
 dels enunciats **i dins del text de cada pista**; una intro "què és una demostració"
 amb tres exemples resolts pas a pas; **un filtre 2D/3D i un filtre de 5 categories
 temàtiques** (amb icones dibuixades a mà) a la llista de preguntes; **12 preguntes
@@ -148,14 +148,14 @@ cal tocar.
 ### Glossari
 
 Botó "📖 Glossari" a la capçalera: un panell de cerca i navegació per categoria amb
-53 termes (triangles, angles, cercles, polígons, sòlids, còniques...), més la
+56 termes (triangles, angles, cercles, polígons, sòlids, còniques...), més la
 detecció automàtica de qualsevol d'aquests termes **dins l'enunciat d'una pregunta
 i dins del text de cada Pista (1-4) d'una guia** — mai a la comprovació ni a
 l'"i després", per decisió explícita. El terme apareix subratllat i, en clicar-lo,
 un popover hi mostra la definició al mateix lloc.
 
-Dades a `js/data/glossari-dades.js`. **Els 53 termes tenen figura pròpia**
-(32 fitxers: n'hi ha que en comparteixen una — v.
+Dades a `js/data/glossari-dades.js`. **Els 56 termes tenen figura pròpia**
+(34 fitxers: n'hi ha que en comparteixen una — v.
 `docs/guies/NOTA-GLOSSARI-27-FIGURES.md`). Les figures són **tinta sola, sense sanguina**: aquí no hi ha "figura del llibre" vs
 "afegit de l'alumne", només un sol diagrama — un accent (`--pencil`) marca els noms
 de terme.
@@ -250,8 +250,19 @@ dificultat 3 + 2D → dificultat 3 + 3D
 — i, dins de cada un d'aquests sis grups, un itinerari pensat perquè
 preguntes emparentades (per tècnica o per dependència real ja
 documentada a les guies) quedin juntes. No sempre és possible —
-algunes cadenes de dependència reals travessen la frontera de
-dificultat o de dimensió— i on no ho és, es respecta l'ordre de disseny original. `js/nucli/ordre.js` és qui ho resol en temps
+algunes cadenes de dependència travessaven la frontera de
+dificultat o de dimensió— i on no ho és, es respecta l'ordre de disseny original.
+
+Des del set. 2026 hi ha dues garanties, que `verifica_projecte.py` comprova:
+**cap guia no surt abans d'una pregunta de la qual declara dependre**, i
+**cap pregunta no és més fàcil que una de la qual depèn** (si en depèn, com
+a mínim és tan difícil com ella). Les dependències que creuaven la frontera
+entre grups eren, o bé falses (es van reformular), o bé dificultats mal
+classificades (9 preguntes van pujar de dificultat i es van col·locar just
+darrere de la que necessiten; v. `docs/guies/NOTA-COHERENCIA-SET-2026.md`).
+El mateix val dins de cada itinerari temàtic.
+
+`js/nucli/ordre.js` és qui resol l'ordre en temps
 d'execució (amb degradació segura si l'array queda incomplet o
 desapareix); `js/data/preguntes-dades.js` mai canvia d'ordre — segueix
 sent, sempre, l'ordre de disseny original.
@@ -262,7 +273,7 @@ sent, sempre, l'ordre de disseny original.
 |---|---|
 | Correcció o puntuació | El llibre no en té — cada pregunta és un punt de partida per pensar-hi, no un test |
 | Pistes curtes (`pista`) | `pista.en`/`pista.ca` continuen sent `null` a totes 130. NO les substitueixen les guies: són coses diferents (una pista curta seria una frase; una guia és una escala completa). El botó 💡 simplement no apareix quan no n'hi ha |
-| 8 preguntes sense gràfic d'enunciat | 5 són amagades (`q21 q35 q67 q102 q106`, v. secció pròpia). Les altres 3 són **visibles**: `q84`, `q87` i `q88`, les tres de trigonometria que es van publicar en tancar la revisió matemàtica (ago. 2026), i a la llista hi surten amb l'etiqueta "sense figura". Fins a la ronda `docs/guies/NOTA-ENUNCIATS-D.md` cap pregunta visible no n'estava mancada; publicar aquestes tres ho va canviar i la documentació no ho va recollir fins al set. 2026 |
+| 5 preguntes sense gràfic d'enunciat | Són exactament 5 de les amagades (`q21 q35 q67 q102 q106`, v. secció pròpia): cap pregunta visible no es queda sense imatge. `q84`, `q87` i `q88`, visibles des de l'ago. 2026, van estar sense imatge fins al set. 2026, quan van rebre `fig-217`–`fig-219` (lot E, `docs/guies/figures-enunciats-E.html`) |
 | Assignació per curs (`#curs=2ESO` i similars) | El camp `curs` existeix a l'esquema de dades però és `null` arreu — decisió de contingut ajornada conscientment, no una limitació tècnica. El filtre ja funciona (prova-ho a la barra d'adreces); simplement no hi ha encara cap valor assignat |
 | Mode d'interacció (resposta oberta, dibuix, etc.) | Ídem: `interaccio` és `null` a tot arreu, estructura preparada, contingut pendent. La interactivitat real (punts arrossegables, recàlcul en viu) exigiria una capa de renderitzat completament diferent de la que hi ha ara (`docs/render.js` genera PNG estàtics per disseny, no SVG/canvas en viu al navegador) — un canvi d'arquitectura real, no una dada per omplir |
 | Selector d'idioma visible | Amagat de la interfície a petició explícita ("mostra només la capa del català"). La capacitat multilingüe NO s'ha eliminat: `ui-strings.js` conserva les dues capes senceres, i `window.geoI18n.setLang("en")` (o `?lang=en` a la URL) segueix funcionant |
@@ -271,9 +282,9 @@ sent, sempre, l'ordre de disseny original.
 
 ```
 index.html                    — única pàgina real de l'app (la de l'alumnat)
-assets/img/                   — 122 imatges d'enunciat (67 escanejades + 55 dibuixades a mà)
+assets/img/                   — 125 imatges d'enunciat (67 escanejades + 58 dibuixades a mà)
 assets/img/pistes/            — 162 figures de guia (129 a Pista 3 + 32 a Pista 2 + 1 a Pista 4)
-assets/img/glossari/          — 32 figures del glossari (cobreixen els 53 termes: n'hi ha
+assets/img/glossari/          — 34 figures del glossari (cobreixen els 56 termes: n'hi ha
                                 que en comparteixen una, v. NOTA-GLOSSARI-27-FIGURES.md)
 assets/img/demo/               — 15 figures de la intro "què és una demostració" (5 panells × 3)
 assets/img/icones/            — 5 icones del filtre de categories temàtiques
@@ -289,7 +300,7 @@ js/
     categories-tematiques-dades.js — classificació temàtica de les 130 preguntes en 6 categories (s'edita a mà)
     itineraris-tematics-dades.js — els 6 itineraris temàtics fixos sobre les 118 visibles,
                                 i els grups de preguntes entrellaçades (s'edita a mà)
-    glossari-dades.js         — els 53 termes del glossari (s'edita a mà)
+    glossari-dades.js         — els 56 termes del glossari (s'edita a mà)
     demos-dades.js             — les 3 demostracions fixes, model de passos (s'edita a mà)
   i18n/
     ui-strings.js             — textos d'interfície en/ca
@@ -426,7 +437,7 @@ mà**; el disseny està documentat a `docs/ITINERARIS-TEMATICS-DESIGN-NOTES.md`.
 
 `analitzador-geom.html` es genera amb `python3 build_analitzador_geom.py`, que
 llegeix `js/data/preguntes-dades.js` i la llista `EXERCICIS_AMAGATS` de
-`js/ui/llista.js`, i hi incrusta les 116 imatges de les preguntes visibles en
+`js/ui/llista.js`, i hi incrusta les 119 imatges de les preguntes visibles en
 base64 perquè el fitxer funcioni desat a qualsevol carpeta. **Cal tornar-lo a
 executar cada cop que canviïn els enunciats, les imatges o la llista d'amagades.**
 
@@ -469,10 +480,10 @@ sobre el crema de la pàgina.
 
 ## Estat i propers passos
 
-**Les 130 de 130 preguntes tenen guia de demostració completa.** **122 de 130
-tenen imatge d'enunciat.** De les 8 restants, 5 són amagades i 3 són visibles
-(`q84`, `q87`, `q88`: trigonometria, v. la taula "No hi ha, i per què").
-**53 de 53 termes del glossari tenen figura** (completat — v.
+**Les 130 de 130 preguntes tenen guia de demostració completa.** **125 de 130
+tenen imatge d'enunciat**; les 5 restants són amagades, i cap pregunta visible
+no es queda sense.
+**56 de 56 termes del glossari tenen figura** (completat — v.
 `docs/guies/NOTA-GLOSSARI-27-FIGURES.md`).
 **12 preguntes estan amagades de la llista** (i de "Anterior/Següent" i dels
 suggeriments de l'itinerari) per decisió de contingut (mai
@@ -495,8 +506,6 @@ Pendents coneguts, cap dels quals bloqueja l'ús actual del lloc:
   bloquejat: obert per doble clic, la secció de descoberta surt buida i només
   es veu la llista escrita a mà. Per veure-la sencera cal servir el projecte
   (`python3 -m http.server`). La resta del lloc no en depèn.
-- `q84`, `q87` i `q88` són visibles i no tenen imatge d'enunciat (a la llista
-  hi surten amb l'etiqueta "sense figura").
 
 Historial complet de lliuraments (ordre cronològic, cada un amb la seva pròpia
 nota tècnica a `docs/guies/NOTA-*.md`): les 130 guies del llibre (lots 1-10,
@@ -520,8 +529,10 @@ professorat (`COORDINACIO-AGENTS-SOLUCIONS.md`), la prova escrita
 (`LLEGEIX-ME.md`), l'auditoria de documentació d'ago. 2026
 (`docs/guies/NOTA-AUDITORIA-DOCUMENTACIO.md`) i les correccions de set. 2026:
 mode fosc, solució de `q88`, figures amb retolat fals i xifres de la
-documentació (`docs/guies/NOTA-CORRECCIONS-SET-2026.md`), i el flux de
-lliurament per ZIP automatitzat (`docs/guies/NOTA-FLUX-ZIP-SET-2026.md`).
+documentació (`docs/guies/NOTA-CORRECCIONS-SET-2026.md`), el flux de
+lliurament per ZIP automatitzat (`docs/guies/NOTA-FLUX-ZIP-SET-2026.md`) i la
+coherència del contingut matemàtic: ordre i dependències, glossari a 56 termes,
+imatges de q84/q87/q88 i el teorema del casquet (`docs/guies/NOTA-COHERENCIA-SET-2026.md`).
 
 <!-- atribucio-centre:inici -->
 

@@ -133,11 +133,11 @@ inspection, not memory, at the moment of writing:
 | What | Value |
 |---|---|
 | Questions | 130 (fixed corpus, not growing) |
-| Questions with an enunciat image | 122 / 130 (67 scanned + 55 hand-drawn) |
+| Questions with an enunciat image | 125 / 130 (67 scanned + 58 hand-drawn); the 5 without one are all hidden |
 | Questions with a full guide | 130 / 130 |
 | Guides with a second image at Pista 2 | 32 / 130 |
 | Guide figures, by where they live | 129 at Pista 3 (nivell 2) + 32 at Pista 2 (nivell 1) + 1 at Pista 4 (`q15`, the only guide with no nivell-2 figure) = 162 |
-| Glossary terms | 53, **all 53 with a figure** (32 image files; some terms share one) |
+| Glossary terms | 56, **all 56 with a figure** (34 image files; some terms share one). 53 until Sep 2026, when `teorema-del-sinus`, `homotecia` and `estirament` were added |
 | Teacher-facing solutions | 118 / 118 visible questions (`solucions/`; `verifica_projecte.py` now fails if a visible question has none) |
 | Thematic itineraries | 6 fixed editorial paths over the 118 visible questions |
 | Glossary terms detected inline | inside enunciat text AND inside Pista 1-4 text (never comprovació, never i-després) |
@@ -146,7 +146,7 @@ inspection, not memory, at the moment of writing:
 | Visible questions | 118 (81 2D + 37 3D) |
 | 2D / 3D split | 88 / 42 |
 | Intro demos | 3, each now a 6-step reveal-one-at-a-time flow (not the old "always visible" design) |
-| Written-exam generator | `analitzador-geom.html`, built from `js/data/preguntes-dades.js` + `EXERCICIS_AMAGATS`, with the 116 visible-question images embedded as base64 (see `LLEGEIX-ME.md`) |
+| Written-exam generator | `analitzador-geom.html`, built from `js/data/preguntes-dades.js` + `EXERCICIS_AMAGATS`, with the 119 visible-question images embedded as base64 (see `LLEGEIX-ME.md`) |
 
 `docs/guies/NOTA-*.md` has one delivery note per round, in the repo, each
 documenting exactly what changed, why, and how it was verified. **Read the
@@ -177,6 +177,7 @@ NOTA-GLOSSARI-27-FIGURES                                (the last 27 terms: glos
 NOTA-AUDITORIA-DOCUMENTACIO                             (doc/comment audit, Aug 2026 — this list included)
 NOTA-CORRECCIONS-SET-2026                               (dark mode, q88 solution, fig-107/121/059, stale numbers)
 NOTA-FLUX-ZIP-SET-2026                                  (upload Action: _ESBORRA.txt, regenera, verify, smoke test)
+NOTA-COHERENCIA-SET-2026                                (order/deps fixed, 9 difficulties raised, glossary 56, q84/q87/q88 images, q62 2πRh)
 ```
 
 Two documents outside `docs/guies/` belong to the same paper trail:
@@ -204,17 +205,11 @@ gaps:
    100 %, and those are the ones the delivery notes rely on. Treat
    `guies-dades.js` as the source of truth for which hint a figure belongs to;
    fix the column if you ever touch the manifest for another reason.
-2. **8 questions have no enunciat image** — down from 16 after
-   `docs/guies/NOTA-ENUNCIATS-D.md` (8 of the original 16 got a real
-   image; the other 3 that had no natural neutral figure — q67, q102,
-   q106 — were added to `EXERCICIS_AMAGATS` instead of forcing one).
-   Of the remaining 8 (`q21 q35 q67 q84 q87 q88 q102 q106`), 5 are hidden
-   and **3 are visible**: `q84`, `q87` and `q88`, the three trigonometry
-   questions published in Aug 2026. They show a "sense figura" badge in
-   the list. (Until Sep 2026 this item claimed that every visible
-   question had an image: true after NOTA-ENUNCIATS-D, false since those
-   three were published.) If a hidden question is ever un-hidden, check
-   this first: it may need an image before it can ship visible.
+2. **5 questions have no enunciat image** — `q21 q35 q67 q102 q106`,
+   all of them hidden. `q84`, `q87` and `q88` (visible since Aug 2026)
+   got theirs in Sep 2026 (`fig-217`–`fig-219`, lot E). Every visible
+   question has an image again. If a hidden question is ever un-hidden,
+   check this first: it may need an image before it can ship visible.
 3. **`sol.html`'s live-discovery section needs a server.** It probes for
    `solucions/<id>.html` with `fetch()`, which `file://` blocks — the very
    constraint the whole project is built around. Opened by double-click it
@@ -234,7 +229,7 @@ gaps:
 6. Nothing else is queued. If the owner asks for something new, it's a
    genuinely new request, not a continuation of a documented backlog.
 
-**Glossary figures are DONE** (53/53, see `NOTA-GLOSSARI-27-FIGURES.md`). This
+**Glossary figures are DONE** (56/56 since Sep 2026; 53/53 then, see `NOTA-GLOSSARI-27-FIGURES.md`). This
 list said otherwise until the Aug 2026 documentation audit; if you are reading a
 cached copy that still claims 27 are pending, it is out of date.
 

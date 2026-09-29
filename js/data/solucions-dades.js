@@ -4027,13 +4027,23 @@ window.SOLUCIONS = {
       {
         "figures": [],
         "textos": [
-          "R=2, h=1: V=(πh²/3)(3R−h)=(π/3)(6−1)=5π/3≈5,24. Quan h=R=2 es recupera el volum de la semiesfera, (2/3)πR³=16π/3≈16,76. Superfície corba (sense la base): 2πRh=4π≈12,57.",
-          "Dos avisos d'honestedat. El primer: que \"sumar\" àrees de seccions infinitament primes doni exactament un volum és el pas que el càlcul integral formalitza, i és fora de l'abast d'aquest recull —el mateix tipus de frontera que ja apareix en trobar el perímetre d'una regió formada per un bastó en moviment. El segon, que convé no passar per alt: tot l'argument de Cavalieri dona el volum, i no diu res de la superfície. La fórmula 2πRh és certa i és un teorema d'Arquimedes —projectant el casquet horitzontalment sobre el cilindre que envolta l'esfera, l'àrea es conserva exactament, cosa gens evident—, però aquí es dona sense demostrar. El que sí que queda completament establert és l'argument de Cavalieri: dues figures amb la mateixa secció a cada alçada tenen el mateix volum."
+          "Cavalieri dona volums, no àrees; però el volum que s'acaba de trobar porta a l'àrea. Es talla la superfície corba del casquet en trossets molt petits i s'uneix cadascun amb el centre de l'esfera: són piràmides primíssimes, totes d'alçada R, que juntes omplen el sector esfèric —el casquet més el con que va del centre de l'esfera al cercle de tall. Com que el volum d'una piràmide és un terç de la base per l'alçada, el sector val (1/3)·R·S, on S és la superfície corba del casquet.",
+          "Ara el mateix sector, calculat com a casquet més con. El cercle de tall és a distància R−h del centre, i el seu radi ρ surt de Pitàgores: ρ² = R² − (R−h)² = h(2R−h). El con té, doncs, volum (π/3)·h(2R−h)·(R−h), i el sector:",
+          "(πh/3)[h(3R−h) + (2R−h)(R−h)] = (πh/3)[3Rh − h² + 2R² − 3Rh + h²] = (2/3)πR²h",
+          "Igualant les dues expressions, (1/3)·R·S = (2/3)πR²h, i per tant S = 2πRh. (Si h > R, el con queda dins del casquet i s'ha de restar en lloc de sumar; la mateixa fórmula ja ho fa sola, perquè aleshores R−h és negatiu.) És exactament l'àrea lateral d'un cilindre de radi R i alçada h: el teorema d'Arquimedes del casquet, que diu que projectant-lo horitzontalment sobre el cilindre que envolta l'esfera l'àrea no canvia."
+        ],
+        "titol": "La superfície, a partir del volum"
+      },
+      {
+        "figures": [],
+        "textos": [
+          "R=2, h=1: V=(πh²/3)(3R−h)=(π/3)(6−1)=5π/3≈5,24. Quan h=R=2 es recupera el volum de la semiesfera, (2/3)πR³=16π/3≈16,76. Superfície corba (sense la base): el sector fa (2/3)π·4·1 = 8π/3, i S = 3·(8π/3)/2 = 4π ≈ 12,57 = 2πRh ✓. I amb h = 2R (l'esfera sencera) surten (4/3)πR³ i 4πR², com ha de ser.",
+          "Un avís d'honestedat: que \"sumar\" seccions infinitament primes doni exactament un volum (Cavalieri), o que infinites piràmides primíssimes omplin exactament el sector, és el pas que el càlcul integral formalitza, i és fora de l'abast d'aquest recull —el mateix tipus de frontera que ja apareix en trobar el perímetre d'una regió formada per un bastó en moviment. La resta de l'argument queda completament establert."
         ],
         "titol": "Comprovació"
       }
     ],
-    "resum": "El volum d'un casquet esfèric d'alçada h en una esfera de radi R és (πh²/3)(3R−h), que surt de restar un tronc de con a un cilindre de radi R i alçada h. L'àrea de la superfície corba (sense la base plana) és 2πRh —un teorema d'Arquimedes que aquí es dona, no es demostra.",
+    "resum": "El volum d'un casquet esfèric d'alçada h en una esfera de radi R és (πh²/3)(3R−h), que surt de restar un tronc de con a un cilindre de radi R i alçada h. L'àrea de la superfície corba (sense la base plana) és 2πRh —el teorema d'Arquimedes del casquet—, que surt de calcular de dues maneres el volum del sector esfèric: com a suma de piràmides primíssimes d'alçada R, (1/3)·R·S, i com a casquet més con, (2/3)πR²h.",
     "titol": "El casquet esfèric: la semiesfera generalitzada"
   },
   "q63": {

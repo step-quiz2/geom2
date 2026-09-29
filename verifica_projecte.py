@@ -89,7 +89,10 @@ if P is not None:
         difs[p.get("dificultat")] = difs.get(p.get("dificultat"), 0) + 1
     if dims == {"2D": 88, "3D": 42}: ok("dimensio 88/42")
     else: err("distribució de dimensio inesperada: %s" % dims)
-    if difs == {1: 28, 2: 70, 3: 32}: ok("dificultat 28/70/32")
+    # 28/70/32 fins al set. 2026; 9 preguntes van pujar de dificultat perquè
+    # no fossin més fàcils que una de la qual depenen (v. §17 i
+    # docs/guies/NOTA-COHERENCIA-SET-2026.md).
+    if difs == {1: 24, 2: 67, 3: 39}: ok("dificultat 24/67/39")
     else: err("distribució de dificultat inesperada: %s" % difs)
 
     # -------------------------------------------------- 3b. imatges d'enunciat
@@ -582,12 +585,19 @@ if _ITIN:
             % "; ".join(_falten))
     else:
         ok("tot DEPÈN que creua itinerari consta a `requereix`")
+    # Fins al set. 2026 aquests dos eren AVISOS (hi havia 6 inversions i 3
+    # dependències d'amagades pendents de decidir). Resolts tots, passen a
+    # ERRORS: un cas nou és una regressió, no un pendent conegut.
     if _invertits:
-        avis("dins d'un mateix itinerari, l'`ordre` no respecta el DEPÈN: %s"
-             % "; ".join(_invertits))
+        err("dins d'un mateix itinerari, l'`ordre` no respecta el DEPÈN: %s"
+            % "; ".join(_invertits))
+    else:
+        ok("dins de cada itinerari, l'`ordre` respecta tots els DEPÈN")
     if _amagades:
-        avis("guies visibles que declaren DEPÈN d'una pregunta amagada: %s"
-             % "; ".join(_amagades))
+        err("guies visibles que declaren DEPÈN d'una pregunta amagada: %s"
+            % "; ".join(_amagades))
+    else:
+        ok("cap guia visible no depèn d'una pregunta amagada")
 
 # --- la còpia compilada de les guies coincideix amb el seu original? -------
 # js/data/guies-dades.js NO és font: el fabrica parse_guies.py a partir dels
@@ -710,6 +720,12 @@ elif P:
     _n_am, _n_vis = len(_AM), len(_vis)
     _n_sol = len([i for i in _vis if i in _sol])
     _vis_sense_img = [q["id"] for q in P if q["id"] in _vis and not q.get("imatge")]
+    # Des del set. 2026 (lot E: q84, q87, q88) cap pregunta visible no es
+    # queda sense imatge d'enunciat; una que es desamagui n'ha de tenir.
+    if _vis_sense_img:
+        err("preguntes VISIBLES sense imatge d'enunciat: %s" % " ".join(_vis_sense_img))
+    else:
+        ok("tota pregunta visible té imatge d'enunciat")
     _PATRONS = [
         (r"\b(\d+) preguntes\s+(?:estan\s+)?amagades", _n_am, "preguntes amagades"),
         (r"\bLes (\d+) preguntes d'\s*`EXERCICIS_AMAGATS`", _n_am, "preguntes amagades"),
@@ -801,6 +817,41 @@ if os.path.exists("actualitza_versio_css.py"):
         ok("el ?v= dels fulls d'estil correspon al contingut dels CSS")
 else:
     err("falta actualitza_versio_css.py")
+
+# ------------------ 17. ordre de presentació general i dificultat vs DEPÈN
+# Fins al set. 2026 hi havia 17 casos en què una guia sortia a la llista
+# ABANS d'una pregunta de la qual declara dependre (HANDOFF-FULL §1.3), i 9
+# preguntes classificades com a més fàcils que una de la qual depenen. Es van
+# resoldre (v. docs/guies/NOTA-COHERENCIA-SET-2026.md): ara són errors.
+_O17 = []
+if os.path.exists("js/data/ordre-preguntes.js"):
+    _s17 = open("js/data/ordre-preguntes.js", encoding="utf-8").read()
+    _O17 = re.findall(r'^\s*"(q[0-9a-z_]+)",?', _s17[_s17.find("window.ORDRE_PREGUNTES"):], re.M)
+_AM17 = _amagades_de_llista() or []
+if _O17 and P:
+    _vis17 = [q for q in _O17 if q not in _AM17]
+    _pos17 = {q: i for i, q in enumerate(_vis17)}
+    _dif17 = {q["id"]: q.get("dificultat") for q in P}
+    _dep17 = _deps_declarades_a_les_guies()
+    _inv17, _dif_mal = [], []
+    for _q, _ds in sorted(_dep17.items()):
+        if _q not in _pos17: continue
+        for _r in _ds:
+            if _r not in _pos17: continue
+            if _pos17[_r] > _pos17[_q]:
+                _inv17.append("%s (#%d) abans de %s (#%d)" % (_q, _pos17[_q] + 1, _r, _pos17[_r] + 1))
+            if (_dif17.get(_r) or 0) > (_dif17.get(_q) or 0):
+                _dif_mal.append("%s (dificultat %s) depèn de %s (dificultat %s)"
+                                % (_q, _dif17.get(_q), _r, _dif17.get(_r)))
+    if _inv17:
+        err("ordre de presentació: guies que surten abans d'una pregunta de la qual "
+            "declaren dependre: %s" % "; ".join(_inv17))
+    else:
+        ok("l'ordre de presentació respecta tots els DEPÈN entre preguntes visibles")
+    if _dif_mal:
+        err("preguntes més fàcils que una de la qual depenen: %s" % "; ".join(_dif_mal))
+    else:
+        ok("cap pregunta no és més fàcil que una de la qual depèn")
 
 # ------------------------------------------------------------------ informe
 print("\n%d comprovacions passades" % len(oks))

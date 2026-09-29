@@ -33,12 +33,25 @@ raó d'àrees d'1:25. El text no es va canviar perquè quedaria desincronitzat d
 `fig-059`, que caldria redibuixar. **Continua igual.** Va a la mateixa cua que
 els tres casos de la §2.1 d'aquest document.
 
-### 1.2 q62 — demostrar 2πRh — sense canvis
+### 1.2 q62 — demostrar 2πRh — ✅ TANCAT (set. 2026)
+
+**Fet:** la guia de q62 hi porta ara el camí (piràmides primíssimes des del
+centre: el sector esfèric val (1/3)·R·S i també casquet + con = (2/3)πR²h),
+i la solució, el càlcul complet. V. `docs/guies/NOTA-COHERENCIA-SET-2026.md`.
+El text de sota és el registre d'abans.
+
 Marcat com a donat-i-no-demostrat. L'argument d'Arquimedes és fer-ho al nivell
 del quadern, però és llarg i canviaria l'abast de la guia. Oferit, no fet.
 **Continua igual.**
 
-### 1.3 Ordre de presentació — millorat en prosa, intacte en estructura
+### 1.3 Ordre de presentació — ✅ TANCAT (set. 2026)
+
+**Fet:** 0 casos. Els que eren falsos DEPÈN (q03→q08b, q64→q50) s'han
+reformulat; q69 és autosuficient; i 9 preguntes que eren més fàcils que una
+de la qual depenen han pujat de dificultat i s'han col·locat just darrere
+de la seva dependència. `verifica_projecte.py` §17 ho vigila. El text de
+sota és el registre d'abans.
+
 Comptat ara mateix sobre les línies `DEPÈN`: **17 casos en 16 guies** en què una
 guia es presenta abans d'una cosa de la qual declara dependre. Els pitjors:
 
@@ -60,12 +73,24 @@ continuar-hi, perquè és real—, però la guia ja no li parla com si ho hagué
 vist. La decisió que queda és si vols atacar l'estructura (moure entrades a
 `ordre-preguntes.js`) o donar per bo el remei de prosa.
 
-### 1.4 Sis inversions dins d'un mateix itinerari — sense canvis
+### 1.4 Sis inversions dins d'un mateix itinerari — ✅ TANCAT (set. 2026)
+
+**Fet:** cada prerequisit s'ha portat just davant de qui el necessita (p.
+ex. q70 obre l'itinerari de polígons). Ara és un error del verificador, no
+un avís. El text de sota és el registre d'abans.
+
 Avís 1 del verificador. La pitjor continua sent **q04 → q70**: q04 necessita la
 suma (n−2)·180° que q70 estableix setze posicions més tard **dins del mateix
 itinerari**. Les altres: q03→q04, q127→q64, q32→q38, q58→q60, q72→q78.
 
-### 1.5 Dependències sobre preguntes amagades — de 5 a 4
+### 1.5 Dependències sobre preguntes amagades — ✅ TANCAT (set. 2026)
+
+**Fet, amb el mètode de q85:** q50→q18a i q68→q67 no eren necessàries (q50
+només necessita el volum d'un cilindre; q68 no fa servir res de q67); q69 sí
+que feia servir q67, i ara hi introdueix ella mateixa la versió de Pappus
+per a corbes. Cap guia visible no depèn d'una amagada, i el verificador ho
+vigila com a error. El text de sota és el registre d'abans.
+
 ```
 q50 → q18a     q68 → q67     q69 → q67
 ```
@@ -254,11 +279,11 @@ Les tres que aquest document prioritzava estan **totes tres tancades**:
 
 1. ~~**`fig-107` i `fig-121`** (§2.1).~~ ✅ Fet, set. 2026.
 2. ~~**q40, panell 1** (§1.1).~~ ✅ Fet, set. 2026.
-3. **Les tres dependències amagades que queden** (§1.5), amb el mètode de q85:
-   mirar primer si la dependència és de veritat necessària.
+3. ~~**Les tres dependències amagades que queden** (§1.5).~~ ✅ Fet, set. 2026.
 
-La resta —q62, l'ordre de presentació, les inversions d'itinerari, el mode
-Byrne— pot esperar sense que res es faci malbé. (El nom del fitxer
+La resta —el mode Byrne— pot esperar sense que res es faci malbé. (q62,
+l'ordre de presentació i les inversions d'itinerari es van tancar al set.
+2026.) (El nom del fitxer
 `049_dilatacio_...` es va canviar al lliurament de l'eina de frases, i el slug
 a la pantalla, al de set. 2026.)
 
