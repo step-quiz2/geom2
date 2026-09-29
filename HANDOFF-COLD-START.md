@@ -176,6 +176,7 @@ NOTA-ENUNCIATS-D                                        (8 new enunciat images, 
 NOTA-GLOSSARI-27-FIGURES                                (the last 27 terms: glossary now 53/53)
 NOTA-AUDITORIA-DOCUMENTACIO                             (doc/comment audit, Aug 2026 — this list included)
 NOTA-CORRECCIONS-SET-2026                               (dark mode, q88 solution, fig-107/121/059, stale numbers)
+NOTA-FLUX-ZIP-SET-2026                                  (upload Action: _ESBORRA.txt, regenera, verify, smoke test)
 ```
 
 Two documents outside `docs/guies/` belong to the same paper trail:
@@ -348,17 +349,20 @@ which situation each one applies to.
 
 ## 6. Before you ship anything
 
-1. `python3 verifica_projecte.py` → must say `Tot correcte.`
-2. A Playwright regression across all 130 guides (reveal all 4 hints,
-   confirm images load, confirm footer visible) is the standard bar —
-   every past delivery has run this before shipping. Write it fresh;
-   there's no saved script to reuse verbatim (viewport sizes, wait times,
-   and exact selectors have all shifted slightly release to release).
-3. Build the delivery as a diff ZIP against whatever repo state you
-   started from, verify it by applying it to a fresh copy and diffing
-   against your working directory (must be empty diff, modulo any files
-   your delivery note says to delete manually).
+1. `python3 regenera.py` (all generated files, including the CSS `?v=`),
+   then `python3 verifica_projecte.py` → must say `Tot correcte.`
+2. `node tests/smoke.js` → must say `✓ Tot correcte.` This is the saved
+   Playwright regression (all 130 guides in light and dark mode, solutions,
+   `sol.html`, `eina-frases.html`, the exam generator). Until Sep 2026 it had
+   to be rewritten from scratch every delivery; extend it instead.
+3. Delivery is a ZIP uploaded to `_uploads/`, or a Pull Request. The upload
+   Action (`.github/workflows/unzip-upload.yml`) extracts it, applies its
+   `_ESBORRA.txt` (list of files to delete — a ZIP **can** delete files now),
+   regenerates, verifies and commits to `main`, or leaves `main` untouched
+   and saves the result to an `upload-revisar/N` branch if anything fails.
+   PRs are checked by `.github/workflows/verifica.yml`. See README, "Com
+   arriben els canvis al repositori".
 4. Write a `docs/guies/NOTA-<name-of-the-change>.md` delivery note in the
-   same style as the existing ones — what changed, why, what you found
-   and fixed during your own review (not just "I did the task"), how you
+   same style as the existing ones — what changed, why, what you found and
+   fixed during your own review (not just "I did the task"), how you
    verified it.

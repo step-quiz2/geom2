@@ -1,32 +1,168 @@
-name: Extract and commit zip uploads
+# Processa els ZIP pujats a _uploads/ i manté al dia els fitxers generats.
+#
+# QUAN S'EXECUTA
+#   · quan puges un .zip a _uploads/ (el flux habitual de lliurament);
+#   · quan es fa un canvi directe a main en una font d'algun fitxer generat
+#     (CSS, guies, solucions, preguntes, imatges...), per exemple editant un
+#     fitxer des de la web de GitHub;
+#   · a mà, des de la pestanya Actions ("Run workflow").
+#
+# QUÈ FA
+#   1. processa_uploads.py: descomprimeix cada ZIP sobre el repositori i
+#      aplica el seu _ESBORRA.txt, si en porta (ara un lliurament SÍ que pot
+#      esborrar fitxers — v. LESSONS.md §4).
+#   2. regenera.py: guies-dades.js, solucions-dades.js, analitzador-geom.html
+#      i el ?v= dels CSS. Ningú no ha de recordar quin tocava.
+#   3. verifica_projecte.py i tests/smoke.js (el lloc sencer en un Chromium
+#      real, mode clar).
+#   4a. Si tot és correcte: commit a main.
+#   4b. Si alguna cosa falla i hi havia ZIP: el resultat es desa a una branca
+#       upload-revisar/N (per mirar-lo i, si cal, fusionar-lo amb un PR), i a
+#       main només es treu el ZIP de _uploads/. main NO queda trencat.
+#   4c. Si falla sense ZIP (canvi directe a main): es fa commit dels fitxers
+#       regenerats igualment (només reflecteixen el que ja és a main) i
+#       l'execució surt en vermell perquè ho vegis.
+#   En tots els casos, el resum de l'execució (pestanya Actions) explica què
+#   s'ha fet, i surt la sortida sencera del verificador.
+#
+# El que aquesta Action NO pot fer: modificar .github/ (GitHub no deixa que
+# una Action canviï els seus propis workflows). Si un ZIP en porta, s'ignora i
+# el resum ho diu.
+
+name: Processa uploads i regenera
 
 on:
   push:
+    branches: [main]
     paths:
       - '_uploads/**.zip'
+      - 'css/**'
+      - 'solucions/**'
+      - 'docs/guies/GUIES-LOT-*.md'
+      - 'docs/manifest-figures.tsv'
+      - 'js/data/preguntes-dades.js'
+      - 'js/ui/llista.js'
+      - 'assets/img/**'
+      - 'analitzador-geom-plantilla.html'
+      - 'index.html'
+  workflow_dispatch:
 
 permissions:
   contents: write
 
+# Dues pujades seguides s'esperen l'una a l'altra en lloc de trepitjar-se.
+concurrency:
+  group: processa-uploads
+  cancel-in-progress: false
+
 jobs:
-  unzip:
+  processa:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Unzip uploaded files
-        run: |
-          shopt -s nullglob
-          for z in _uploads/*.zip; do
-            echo "Processing $z"
-            unzip -o "$z" -d .
-            rm "$z"
-          done
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-      - name: Commit and push changes
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 1. Descomprimeix els ZIP (i aplica _ESBORRA.txt)
+        id: zip
+        run: python3 processa_uploads.py --informe "$RUNNER_TEMP/zip.md"
+
+      - name: 2. Regenera els fitxers generats
+        id: regenera
         run: |
+          set +e
+          python3 regenera.py > "$RUNNER_TEMP/regenera.txt" 2>&1
+          echo "codi=$?" >> "$GITHUB_OUTPUT"
+          cat "$RUNNER_TEMP/regenera.txt"
+
+      - name: 3a. Verifica el projecte
+        id: verifica
+        run: |
+          set +e
+          python3 verifica_projecte.py > "$RUNNER_TEMP/verifica.txt" 2>&1
+          echo "codi=$?" >> "$GITHUB_OUTPUT"
+          cat "$RUNNER_TEMP/verifica.txt"
+
+      - name: 3b. Prova el lloc en un navegador (tests/smoke.js)
+        id: smoke
+        run: |
+          set +e
+          npm install --no-save --no-package-lock --silent playwright@1.56.1 > /dev/null 2>&1
+          npx playwright install --with-deps chromium > /dev/null 2>&1
+          node tests/smoke.js --nomes-clar > "$RUNNER_TEMP/smoke.txt" 2>&1
+          echo "codi=$?" >> "$GITHUB_OUTPUT"
+          cat "$RUNNER_TEMP/smoke.txt"
+
+      - name: 4. Desa el resultat
+        env:
+          ZIPS: ${{ steps.zip.outputs.zips }}
+          ZIPS_DOLENTS: ${{ steps.zip.outputs.zips_dolents }}
+          C_REGENERA: ${{ steps.regenera.outputs.codi }}
+          C_VERIFICA: ${{ steps.verifica.outputs.codi }}
+          C_SMOKE: ${{ steps.smoke.outputs.codi }}
+        run: |
+          rm -rf node_modules
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if [ "$C_REGENERA" = "0" ] && [ "$C_VERIFICA" = "0" ] && [ "$C_SMOKE" = "0" ] && [ -z "$ZIPS_DOLENTS" ]; then
+            ESTAT="ok"
+          else
+            ESTAT="falla"
+          fi
+
+          if [ -n "$ZIPS" ]; then
+            MISSATGE="Processa $ZIPS"
+          else
+            MISSATGE="Regenera els fitxers generats"
+          fi
+
+          empeny () {   # push amb un reintent, per si main s'ha mogut mentrestant
+            git push "$@" || { git pull --rebase origin main && git push "$@"; }
+          }
+
           git add -A
-          git diff --cached --quiet || git commit -m "Auto-extract uploaded zip"
-          git push
+          DESTI="main"
+          if git diff --cached --quiet; then
+            DESTI="(res a desar)"
+          elif [ "$ESTAT" = "ok" ]; then
+            git commit -q -m "$MISSATGE"
+            empeny origin HEAD:main
+          elif [ -n "$ZIPS" ]; then
+            BRANCA="upload-revisar/$GITHUB_RUN_NUMBER"
+            git checkout -q -b "$BRANCA"
+            git commit -q -m "$MISSATGE (NO VERIFICAT: v. l'execució $GITHUB_RUN_NUMBER)"
+            git push -q origin "$BRANCA"
+            git checkout -q main
+            git rm -q --ignore-unmatch _uploads/*.zip
+            git commit -q -m "Treu de _uploads/ els ZIP que no han passat la verificació ($ZIPS)"
+            empeny origin HEAD:main
+            DESTI="branca $BRANCA (main només perd el ZIP)"
+          else
+            git commit -q -m "$MISSATGE"
+            empeny origin HEAD:main
+          fi
+
+          {
+            if [ "$ESTAT" = "ok" ]; then echo "## ✅ Tot correcte"; else echo "## ❌ Alguna cosa ha fallat"; fi
+            echo
+            echo "**Desat a:** $DESTI"
+            echo
+            echo "### 1. ZIP"
+            cat "$RUNNER_TEMP/zip.md"
+            echo
+            echo "### 2. Regeneració"
+            echo '```'; cat "$RUNNER_TEMP/regenera.txt"; echo '```'
+            echo "### 3a. verifica_projecte.py"
+            echo '```'; cat "$RUNNER_TEMP/verifica.txt"; echo '```'
+            echo "### 3b. tests/smoke.js"
+            echo '```'; cat "$RUNNER_TEMP/smoke.txt"; echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          [ "$ESTAT" = "ok" ]
