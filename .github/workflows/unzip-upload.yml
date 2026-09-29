@@ -11,6 +11,8 @@
 #   1. processa_uploads.py: descomprimeix cada ZIP sobre el repositori i
 #      aplica el seu _ESBORRA.txt, si en porta (ara un lliurament SÍ que pot
 #      esborrar fitxers — v. LESSONS.md §4).
+#   1b. optimitza_png.py: comprimeix sense pèrdua els PNG que porti el ZIP
+#      (només es desa el resultat si és píxel-idèntic i més petit).
 #   2. regenera.py: guies-dades.js, solucions-dades.js, analitzador-geom.html
 #      i el ?v= dels CSS. Ningú no ha de recordar quin tocava.
 #   3. verifica_projecte.py i tests/smoke.js (el lloc sencer en un Chromium
@@ -72,6 +74,13 @@ jobs:
       - name: 1. Descomprimeix els ZIP (i aplica _ESBORRA.txt)
         id: zip
         run: python3 processa_uploads.py --informe "$RUNNER_TEMP/zip.md"
+
+      - name: 1b. Optimitza sense pèrdua els PNG nous o canviats
+        run: |
+          pip install -q pyoxipng pillow numpy
+          CANVIATS=$( (git diff --name-only HEAD; git ls-files --others --exclude-standard) \
+                      | grep -E '^assets/img/.*\.png$' || true)
+          if [ -n "$CANVIATS" ]; then python3 optimitza_png.py $CANVIATS; else echo "cap PNG nou"; fi
 
       - name: 2. Regenera els fitxers generats
         id: regenera

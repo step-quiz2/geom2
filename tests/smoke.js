@@ -16,8 +16,10 @@
        (comprovació + "i després") es veu, i no hi ha cap error de JavaScript.
     3. Les pàgines de solucions/: carreguen, amb estil i amb totes les imatges.
     4. sol.html i eina-frases.html s'obren sense errors.
+    +  Cap pàgina no fa cap petició a internet (el test talla la xarxa).
     5. analitzador-geom.html: llegeix un codi GEO1 (amb una pregunta amagada i
-       un id inexistent), genera una prova de 2 preguntes i les imatges hi són.
+       un id inexistent), genera una prova de 2 preguntes i les imatges hi són;
+       i porta exactament la mateixa llista de preguntes amagades que el lloc.
 
   ÚS (des de l'arrel del repositori)
       node tests/smoke.js              # tot
@@ -43,6 +45,17 @@ const NOMES_CLAR = process.argv.includes('--nomes-clar');
 const esSorollExtern = (t) => /fonts\.g|ERR_CERT|ERR_NAME|ERR_INTERNET|net::/.test(t)
   || /Fetch API cannot load file:.*\/solucions\//.test(t);
 
+// El lloc ha de funcionar SENSE XARXA (s'obre amb doble clic, i des del set.
+// 2026 les fonts també són locals). Qualsevol petició a internet es talla i
+// es compta com a problema.
+const peticionsExternes = [];
+async function senseXarxa(ctx, etiqueta) {
+  await ctx.route(/^https?:/, (r) => {
+    peticionsExternes.push(etiqueta() + ' → ' + r.request().url());
+    r.abort();
+  });
+}
+
 async function novaPagina(ctx, errors, etiqueta) {
   const p = await ctx.newPage();
   p.on('pageerror', (e) => errors.push(etiqueta() + ': ' + e.message));
@@ -65,11 +78,13 @@ async function esperaImatges(p) {
   const errorsJS = [];
   const resum = [];
   let on = '';
+  let amagadesLloc = null;
   const etiqueta = () => on;
 
   // ---- 1 i 2: la llista i les 130 preguntes, en clar i en fosc ----------
   for (const scheme of NOMES_CLAR ? ['light'] : ['light', 'dark']) {
     const ctx = await b.newContext({ viewport: { width: 1000, height: 900 }, colorScheme: scheme });
+    await senseXarxa(ctx, etiqueta);
     // Visitant que ja ha vist la intro: que no se'l redirigeixi a #demo.
     await ctx.addInitScript(() => { try { localStorage.setItem('geo:demo-intro-mostrada', '1'); } catch (e) {} });
     const p = await novaPagina(ctx, errorsJS, etiqueta);
@@ -77,6 +92,7 @@ async function esperaImatges(p) {
     on = scheme + ' #llista';
     await p.goto(url('index.html') + '#');
     await p.waitForTimeout(400);
+    if (scheme === 'light') amagadesLloc = await p.evaluate(() => window.geoLlista.amagades());
     const llista = await p.evaluate(() => ({
       entrades: document.querySelectorAll('.question-entry').length,
       toggles: document.querySelectorAll('.dim-filtre__toggle').length,
@@ -118,6 +134,7 @@ async function esperaImatges(p) {
   // ---- 3 i 4: solucions, sol.html, eina-frases.html ---------------------
   {
     const ctx = await b.newContext();
+    await senseXarxa(ctx, etiqueta);
     const p = await novaPagina(ctx, errorsJS, etiqueta);
     const fitxers = fs.readdirSync(path.join(ARREL, 'solucions')).filter((f) => f.endsWith('.html'));
     let imatges = 0;
@@ -145,6 +162,13 @@ async function esperaImatges(p) {
     // ---- 5: analitzador ----------------------------------------------------
     on = 'analitzador-geom.html';
     await p.goto(url('analitzador-geom.html'));
+    // La llista d'amagades que porta l'analitzador (la hi injecta
+    // build_analitzador_geom.py) ha de ser EXACTAMENT la que fa servir el lloc.
+    const amagadesAnalitzador = await p.evaluate(() => window.EXERCICIS_AMAGATS || null);
+    if (JSON.stringify(amagadesAnalitzador) !== JSON.stringify(amagadesLloc)) {
+      problemes.push(on + ': la llista d\'amagades no coincideix amb la del lloc (' +
+        JSON.stringify(amagadesAnalitzador) + ' vs ' + JSON.stringify(amagadesLloc) + ')');
+    }
     await p.fill('#entrada', 'GEO1-q01,q02,q19,qzzz');
     await p.click('#btn-llegeix');
     await p.waitForTimeout(200);
@@ -165,7 +189,9 @@ async function esperaImatges(p) {
   await b.close();
 
   console.log(resum.map((l) => '· ' + l).join('\n'));
-  const tot = problemes.concat(errorsJS.map((e) => 'error JS — ' + e));
+  const tot = problemes
+    .concat([...new Set(peticionsExternes)].map((x) => 'petició a internet — ' + x))
+    .concat(errorsJS.map((e) => 'error JS — ' + e));
   if (tot.length) {
     console.log('\n✗ ' + tot.length + ' problemes:');
     tot.forEach((x) => console.log('  - ' + x));

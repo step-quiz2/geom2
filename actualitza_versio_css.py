@@ -16,7 +16,9 @@ contingut: si el CSS no canvia, el ?v= tampoc; si canvia un sol caràcter, el
 
 QUÈ TOCA
   index.html               css/tokens.css, css/base.css, css/components.css
-  solucions/*.html         els mateixos tres (../css/...) i sol.css
+                           i css/fonts.css
+  solucions/*.html         els mateixos (../css/...) i sol.css
+  eina-frases.html         css/fonts.css
 
 Els tres fulls del lloc porten TOTS TRES la mateixa empremta (la dels tres
 junts): és la convenció que ja hi havia ("incrementa'ls tots tres alhora"),
@@ -38,11 +40,13 @@ import sys
 BASE = os.path.dirname(os.path.abspath(__file__))
 FULLS_LLOC = ["css/tokens.css", "css/base.css", "css/components.css"]
 FULL_SOL = "solucions/sol.css"
+FULL_FONTS = "css/fonts.css"
 
 # ?v= seguit de lletres/xifres: accepta tant els números vells (?v=7) com
 # les empremtes noves (?v=3fa2c19b).
 RE_LLOC = re.compile(r'((?:\.\./)?css/(?:tokens|base|components)\.css)\?v=[0-9A-Za-z]+')
 RE_SOL = re.compile(r'(sol\.css)\?v=[0-9A-Za-z]+')
+RE_FONTS = re.compile(r'((?:\.\./)?css/fonts\.css)\?v=[0-9A-Za-z]+')
 
 
 def empremta(rutes):
@@ -55,6 +59,7 @@ def empremta(rutes):
 
 def fitxers_html():
     yield "index.html"
+    yield "eina-frases.html"
     dirsol = os.path.join(BASE, "solucions")
     for n in sorted(os.listdir(dirsol)):
         if n.endswith(".html"):
@@ -64,6 +69,7 @@ def fitxers_html():
 def calcula():
     """Retorna {fitxer: (text_actual, text_correcte)} per a cada HTML."""
     v_lloc, v_sol = empremta(FULLS_LLOC), empremta([FULL_SOL])
+    v_fonts = empremta([FULL_FONTS])
     res = {}
     for rel in fitxers_html():
         cami = os.path.join(BASE, rel)
@@ -71,6 +77,7 @@ def calcula():
             txt = f.read()
         nou = RE_LLOC.sub(lambda m: m.group(1) + "?v=" + v_lloc, txt)
         nou = RE_SOL.sub(lambda m: m.group(1) + "?v=" + v_sol, nou)
+        nou = RE_FONTS.sub(lambda m: m.group(1) + "?v=" + v_fonts, nou)
         res[rel] = (txt, nou)
     return res, v_lloc, v_sol
 

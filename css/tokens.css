@@ -234,3 +234,29 @@
   --icon-filter-active: invert(1);
   --icon-blend-active:  normal;
 }
+
+/*
+  Paper (set. 2026). Sigui quin sigui el tema de la pantalla, la fitxa
+  impresa surt en tinta negra sobre blanc: en mode fosc, sense aquest bloc,
+  el text sortiria gris clar sobre el blanc del full. Va després dels blocs
+  de mode fosc perquè els guanyi en l'ordre de la cascada.
+*/
+@media print {
+  :root,
+  :root[data-theme="dark"],
+  :root[data-theme="light"] {
+    --paper:        #FFFFFF;
+    --paper-raised: #FFFFFF;
+    --ink:          #000000;
+    --ink-soft:     #333333;
+    --ink-faint:    #555555;
+    --pencil:       #8B5E3C;
+    --rule:         #CCCCCC;
+    --rule-strong:  #999999;
+    --figure-sheet:       transparent;
+    --figure-sheet-pad:   0px;
+    --figure-sheet-width: auto;
+    --figure-sheet-scan:  #FFFFFF;
+    --figure-caption-ink: #555555;
+  }
+}

@@ -17,7 +17,9 @@ Fes doble clic a `index.html`. No cal cap servidor, cap `npm install`, cap build
 Funciona directament des del sistema de fitxers (`file://`) perquè totes les dades
 viuen en fitxers JavaScript (`js/data/*.js`, que assignen a variables globals com
 `window.PREGUNTES`), no en `.json` carregats amb `fetch()` — el navegador bloqueja
-aquestes peticions sota `file://`.
+aquestes peticions sota `file://`. **No cal connexió a internet:** des del set.
+2026 ni les fonts no venen de fora (`css/fonts.css`, `assets/fonts/`), i cap
+pàgina no fa cap petició a la xarxa (`tests/smoke.js` ho comprova).
 
 Si prefereixes servir-ho amb un servidor local (per exemple per provar-ho des d'un
 mòbil a la mateixa xarxa), qualsevol servidor estàtic funciona igual de bé:
@@ -210,6 +212,27 @@ vista de detall ofereix com a "veure també"). Les 12 preguntes d'
 `EXERCICIS_AMAGATS` no hi surten mai. Disseny complet a
 `docs/ITINERARIS-TEMATICS-DESIGN-NOTES.md`.
 
+### Cerca, mode projector i fitxa impresa
+
+- **Cerca** (a la llista): per paraula o per número ("84" troba la Qüestió
+  84), sense distingir majúscules ni accents. Mentre hi ha text, busca a
+  totes les preguntes visibles i deixa de banda els filtres 2D/3D i de
+  categoria (un avís ho diu). No es desa: és una consulta del moment.
+- **Mode projector** (botó a cada pregunta): pantalla completa, lletra i
+  figura grans, sense capçalera ni navegació. Es porta amb el teclat o amb un
+  passador de diapositives: **→ / espai / PageDown** revela la pista següent i,
+  quan ja són totes obertes, passa a la pregunta següent; **← / PageUp** torna
+  a la pregunta anterior; **Esc** surt.
+- **Imprimeix la fitxa** (botó a cada pregunta, o Ctrl+P): al paper surten
+  l'enunciat, la figura i la guia sencera —les quatre pistes amb les seves
+  figures, la comprovació i l'"i després"—, sigui quina sigui la pista a què
+  s'ha arribat a la pantalla, i sempre en negre sobre blanc (també si el
+  dispositiu és en mode fosc).
+
+Codi a `js/ui/llista.js` (cerca) i `js/ui/detall.js` (`pintaEines`,
+`commutaProjector`, `pintaFitxaImpresa`); estils al final de
+`css/components.css`.
+
 ### Prova escrita a partir del que s'ha explorat
 
 Un alumne pot demanar de fer un **examen presencial en paper** sobre les
@@ -288,10 +311,13 @@ assets/img/glossari/          — 34 figures del glossari (cobreixen els 56 term
                                 que en comparteixen una, v. NOTA-GLOSSARI-27-FIGURES.md)
 assets/img/demo/               — 15 figures de la intro "què és una demostració" (5 panells × 3)
 assets/img/icones/            — 5 icones del filtre de categories temàtiques
+assets/fonts/                 — Source Serif 4 i JetBrains Mono (woff2) i les seves llicències (OFL)
 css/
+  fonts.css                   — les fonts, servides des del repositori (sense Google Fonts)
   tokens.css                  — variables de disseny (color, tipografia, espai)
   base.css                    — ritme de lectura, layout "llibre obert"
-  components.css              — elements interactius (botons, glossari, itinerari, demo, filtres...)
+  components.css              — elements interactius (botons, glossari, itinerari, demo, filtres,
+                                cerca, mode projector i full d'impressió)
 js/
   data/
     preguntes-dades.js        — les 130 preguntes, en/ca (generat, no editar a mà — v. més avall)
@@ -316,8 +342,9 @@ js/
     demos.js                    — estat de la intro "què és una demostració"
     router.js                 — hash-routing (#q01, #curs=2ESO, #demo...)
   ui/
-    llista.js                 — vista "totes les preguntes": filtres 2D/3D i de categories,
-                                exercicis amagats, i el botó "Copia el meu codi"
+    llista.js                 — vista "totes les preguntes": cerca, filtres 2D/3D i de
+                                categories, i exercicis amagats (EXERCICIS_AMAGATS)
+    export.js                 — el botó "Copia el meu codi" (codi GEO1-… per a la prova escrita)
     detall.js                 — vista d'una pregunta
     glossari.js                — panell overlay + popovers inline
     demo.js                     — vista "què és una demostració" (mecanisme de passos)
@@ -345,12 +372,14 @@ LLEGEIX-ME.md                 — què fa la prova escrita i com s'hi arriba
 
 Eines de manteniment:
 verifica_projecte.py          — comprovació d'integritat; ha de dir "Tot correcte."
+amagats.py                    — l'única lectura d'EXERCICIS_AMAGATS des de Python
 regenera.py                   — refà TOTS els fitxers generats (les quatre línies de sota)
   parse_guies.py              — GUIES-LOT-N.md → js/data/guies-dades.js
   genera-solucions-dades.py   — solucions/*.html → js/data/solucions-dades.js
   build_analitzador_geom.py   — → analitzador-geom.html
   actualitza_versio_css.py    — el ?v= dels CSS, calculat del seu contingut
 processa_uploads.py           — descomprimeix _uploads/*.zip i aplica _ESBORRA.txt
+optimitza_png.py              — comprimeix els PNG sense pèrdua (només si el resultat és píxel-idèntic)
 tests/smoke.js                — el lloc sencer en un navegador real (Playwright)
 next_figure_number.py         — quin és el proper número de figura lliure
 .github/workflows/
@@ -532,7 +561,9 @@ mode fosc, solució de `q88`, figures amb retolat fals i xifres de la
 documentació (`docs/guies/NOTA-CORRECCIONS-SET-2026.md`), el flux de
 lliurament per ZIP automatitzat (`docs/guies/NOTA-FLUX-ZIP-SET-2026.md`) i la
 coherència del contingut matemàtic: ordre i dependències, glossari a 56 termes,
-imatges de q84/q87/q88 i el teorema del casquet (`docs/guies/NOTA-COHERENCIA-SET-2026.md`).
+imatges de q84/q87/q88 i el teorema del casquet (`docs/guies/NOTA-COHERENCIA-SET-2026.md`), i les
+eines per a l'aula (cerca, mode projector, fitxa impresa) amb fonts locals i
+imatges optimitzades (`docs/guies/NOTA-AULA-I-QUALITAT-SET-2026.md`).
 
 <!-- atribucio-centre:inici -->
 
