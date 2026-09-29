@@ -660,8 +660,8 @@ la fórmula de segon grau que ja fas servir a l'àlgebra.
 
 **Moviment: compta totes les configuracions possibles** (`recompte-o-induccio`,
 moviment NOU — v. `NOTA-LOT-6.md` per la justificació). DEPÈN de q04 (per
-l'angle de cada polígon) i complementa q08b (ja fet, el mateix recompte en
-3D).
+l'angle de cada polígon). *(Complementa q08b, el mateix recompte en 3D, però
+no en depèn: es pot fer abans o després.)*
 
 **Pista 0 — què vol dir "encaixar" en un mosaic.**
 A cada punt on es toquen diversos polígons, els seus angles interiors han
@@ -713,7 +713,7 @@ comptatge d'angles només et dona la primera.
 **I després.** Aquest mateix recompte, aplicat als poliedres en lloc dels
 mosaics del pla (angle **menor** que 360°, no igual, perquè la figura
 s'aixequi cap a la tercera dimensió en lloc de quedar plana), és
-exactament el que ja vas fer a q08b — i allà hi trobaràs la mateixa
+exactament el que fa q08b — i allà hi trobaràs la mateixa
 distinció, dita amb altres paraules: descartar tots els casos impossibles
 no és el mateix que construir els possibles. Aquí la separació és encara
 més gran que allà: al cas dels poliedres, cadascuna de les cinc rosetes
