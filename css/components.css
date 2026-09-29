@@ -183,9 +183,12 @@
   width: 26px;
   height: 26px;
   display: block;
-  /* les icones son PNG negre-sobre-transparent (mix-blend-mode ja les fa
-     transparents al fons de paper, com la resta de figures del projecte) */
-  mix-blend-mode: multiply;
+  /* les icones son PNG negre sobre fons BLANC (no transparent):
+     mix-blend-mode: multiply fa desapareixer el blanc contra el paper,
+     com la resta de figures del projecte. En mode fosc els dos valors
+     canvien (invert + screen), v. tokens.css. */
+  filter: var(--icon-filter);
+  mix-blend-mode: var(--icon-blend);
 }
 
 .cat-filtre__toggle[aria-pressed="true"] {
@@ -194,9 +197,11 @@
 }
 .cat-filtre__toggle[aria-pressed="true"] .cat-filtre__icon {
   /* icona negra -> blanca sobre el fons fosc del boto actiu; les icones
-     son monocromatiques (tinta sola), invert(1) les converteix net */
-  filter: invert(1);
-  mix-blend-mode: normal;
+     son monocromatiques (tinta sola), invert(1) les converteix net. En
+     mode fosc el boto actiu es clar (--ink s'hi inverteix) i la icona
+     torna a ser negra: v. --icon-filter-active a tokens.css. */
+  filter: var(--icon-filter-active);
+  mix-blend-mode: var(--icon-blend-active);
 }
 
 .cat-filtre__toggle:hover { border-color: var(--pencil); }
@@ -516,7 +521,16 @@
   margin: 0 0 var(--space-3);
 }
 
-.guia__figure { margin: var(--space-4) 0 0; }
+.guia__figure {
+  margin: var(--space-4) 0 0;
+  /* Full clar sota la figura en mode fosc; neutre en mode clar (v. el
+     bloc "Full sota les figures" de tokens.css). */
+  background-color: var(--figure-sheet);
+  padding: var(--figure-sheet-pad);
+  width: var(--figure-sheet-width);
+  max-width: 100%;
+  border-radius: var(--radius-md);
+}
 
 /* multiply: mateix motiu que a les figures del llibre — el blanc del PNG
    desapareix i el traç es fon amb el crema del paper (v. base.css). */
@@ -714,6 +728,13 @@
 }
 .glossari-entry__figure {
   margin: var(--space-3) 0;
+  /* Full clar sota la figura en mode fosc; neutre en mode clar (v. el
+     bloc "Full sota les figures" de tokens.css). */
+  background-color: var(--figure-sheet);
+  padding: var(--figure-sheet-pad);
+  width: var(--figure-sheet-width);
+  max-width: 100%;
+  border-radius: var(--radius-md);
 }
 .glossari-entry__figure img {
   max-width: 100%;
@@ -1011,6 +1032,13 @@
 
 .demo__figure {
   margin: var(--space-4) 0;
+  /* Full clar sota la figura en mode fosc; neutre en mode clar (v. el
+     bloc "Full sota les figures" de tokens.css). */
+  background-color: var(--figure-sheet);
+  padding: var(--figure-sheet-pad);
+  width: var(--figure-sheet-width);
+  max-width: 100%;
+  border-radius: var(--radius-md);
 }
 .demo__figure img {
   max-width: 100%;

@@ -409,11 +409,10 @@
     });
 
     label.appendChild(checkbox);
-    // Text fix breu — no hi ha clau dedicada a ui-strings.js encara
-    // (fora d'abast d'aquest pas concret); "explorat" es manté neutre en
-    // els dos idiomes per no introduir contingut d'interfície nou sense
-    // que main.js/una revisió d'i18n ho reculli formalment.
-    label.appendChild(document.createTextNode(" explorat"));
+    // Clau detail.done_label de ui-strings.js (fins set. 2026 aquí hi
+    // havia " explorat" escrit a mà, l'únic text d'interfície del lloc
+    // que no passava per l'i18n).
+    label.appendChild(document.createTextNode(" " + window.t("detail.done_label")));
 
     contenidor.appendChild(label);
   }
@@ -509,7 +508,9 @@
 
       let raoText;
       if (s.reason === "review_moviment") {
-        raoText = window.tf("itinerary.reason_review_moviment", { move: s.moviment });
+        raoText = window.tf("itinerary.reason_review_moviment", {
+          move: window.geoContingut.nomMoviment(s.moviment),
+        });
       } else {
         raoText = window.t("itinerary." + "reason_" + s.reason);
       }

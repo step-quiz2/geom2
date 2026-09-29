@@ -4,7 +4,7 @@ Un lloc web per explorar 130 preguntes obertes de geometria sintètica. No és u
 cada pregunta és una porta d'entrada a una demostració o un descobriment — sense puntuació, sense respostes correctes marcades, sense
 gamificació.
 Cal fer dos matisos a la frase anterior. En primer lloc, com a versió del
-professorat existeix la carpeta `solucions/` (115 solucions treballades, mai
+professorat existeix la carpeta `solucions/` (118 solucions treballades, mai
 enllaçades des del lloc de l'alumnat — v. `sol.html` i
 `COORDINACIO-AGENTS-SOLUCIONS.md`). En segon lloc, l'alumnat pot demanar de fer
 un examen escrit, presencial i per resoldre amb paper i llapis, un cop ha enviat
@@ -32,10 +32,10 @@ personalitzats **i sis itineraris temàtics fixos**; un
 glossari de 53 termes (**tots 53 amb figura pròpia**) amb detecció automàtica de termes dins
 dels enunciats **i dins del text de cada pista**; una intro "què és una demostració"
 amb tres exemples resolts pas a pas; **un filtre 2D/3D i un filtre de 5 categories
-temàtiques** (amb icones dibuixades a mà) a la llista de preguntes; **15 preguntes
+temàtiques** (amb icones dibuixades a mà) a la llista de preguntes; **12 preguntes
 amagades de la llista** (encara existents, mai esborrades — v. secció pròpia); una
 interfície completa en anglès i català, mostrada només en català per defecte; i,
-per al professorat, **115 solucions treballades** (`solucions/`, mai enllaçades des
+per al professorat, **118 solucions treballades** (`solucions/`, mai enllaçades des
 del lloc de l'alumnat) i un **generador de proves escrites** a partir de les
 preguntes que cada alumne ha explorat (`analitzador-geom.html`).
 
@@ -61,6 +61,13 @@ A les figures de guia, **el negre és la figura original i la sanguina és el qu
 hi afegeixes tu**. La distinció visual és la distinció conceptual que tot plegat
 existeix per ensenyar: la figura original és un enunciat; la línia que hi
 afegeixes és una decisió teva.
+
+Per això la distinció ha de sobreviure al **mode fosc** del dispositiu. Les
+figures són PNG amb fons blanc que es fonen amb el paper amb
+`mix-blend-mode: multiply`; sobre un paper fosc, el mateix multiply feia
+gairebé invisibles la tinta i la sanguina. Des del set. 2026, en mode fosc cada
+figura porta a sota un full de paper clar (tokens `--figure-sheet*` de
+`css/tokens.css`), i en mode clar res no canvia.
 
 32 de les 130 guies tenen, a més, una segona imatge a Pista 2 (nivell 1) — un
 moment visual propi, diferent del que la imatge de Pista 3 acaba mostrant, no una
@@ -147,9 +154,9 @@ i dins del text de cada Pista (1-4) d'una guia** — mai a la comprovació ni a
 l'"i després", per decisió explícita. El terme apareix subratllat i, en clicar-lo,
 un popover hi mostra la definició al mateix lloc.
 
-Dades a `js/data/glossari-dades.js`. **26 dels 53 termes tenen figura pròpia**
-(la resta espera il·lustracions — v. `docs/guies/NOTA-GLOSSARI-MILLORES.md`). Les
-figures són **tinta sola, sense sanguina**: aquí no hi ha "figura del llibre" vs
+Dades a `js/data/glossari-dades.js`. **Els 53 termes tenen figura pròpia**
+(32 fitxers: n'hi ha que en comparteixen una — v.
+`docs/guies/NOTA-GLOSSARI-27-FIGURES.md`). Les figures són **tinta sola, sense sanguina**: aquí no hi ha "figura del llibre" vs
 "afegit de l'alumne", només un sol diagrama — un accent (`--pencil`) marca els noms
 de terme.
 
@@ -184,7 +191,7 @@ un únic cop; qui hi torna, mai més. Dades a `js/data/demos-dades.js`, figures 
 
 Sis camins editorials **fixos** (`js/data/itineraris-tematics-dades.js`, motor a
 `js/nucli/itineraris-tematics.js`, interfície a `js/ui/itineraris.js`) que
-recorren les 115 preguntes visibles agrupades per tema:
+recorren les 118 preguntes visibles agrupades per tema:
 
 ```
 2D · Triangles · Polígons · Circumferència · Còniques · Altres        3D
@@ -199,7 +206,7 @@ mateixes categories temàtiques del filtre, no una classificació nova.
 Cada entrada porta el seu `ordre` dins de l'itinerari, les preguntes que
 `requereix` (dependències reals documentades a les guies) i les seves
 `bessones` (preguntes que ataquen la mateixa idea des d'un altre angle, i que la
-vista de detall ofereix com a "veure també"). Les 15 preguntes d'
+vista de detall ofereix com a "veure també"). Les 12 preguntes d'
 `EXERCICIS_AMAGATS` no hi surten mai. Disseny complet a
 `docs/ITINERARIS-TEMATICS-DESIGN-NOTES.md`.
 
@@ -255,7 +262,7 @@ sent, sempre, l'ordre de disseny original.
 |---|---|
 | Correcció o puntuació | El llibre no en té — cada pregunta és un punt de partida per pensar-hi, no un test |
 | Pistes curtes (`pista`) | `pista.en`/`pista.ca` continuen sent `null` a totes 130. NO les substitueixen les guies: són coses diferents (una pista curta seria una frase; una guia és una escala completa). El botó 💡 simplement no apareix quan no n'hi ha |
-| 8 preguntes sense gràfic d'enunciat | Són exactament les 8 preguntes d'`EXERCICIS_AMAGATS` que no tenen imatge (v. secció pròpia) — cap pregunta VISIBLE a la llista es queda mai sense imatge des de la ronda `docs/guies/figures-enunciats-D.html` (v. `docs/guies/NOTA-ENUNCIATS-D.md`) |
+| 8 preguntes sense gràfic d'enunciat | 5 són amagades (`q21 q35 q67 q102 q106`, v. secció pròpia). Les altres 3 són **visibles**: `q84`, `q87` i `q88`, les tres de trigonometria que es van publicar en tancar la revisió matemàtica (ago. 2026), i a la llista hi surten amb l'etiqueta "sense figura". Fins a la ronda `docs/guies/NOTA-ENUNCIATS-D.md` cap pregunta visible no n'estava mancada; publicar aquestes tres ho va canviar i la documentació no ho va recollir fins al set. 2026 |
 | Assignació per curs (`#curs=2ESO` i similars) | El camp `curs` existeix a l'esquema de dades però és `null` arreu — decisió de contingut ajornada conscientment, no una limitació tècnica. El filtre ja funciona (prova-ho a la barra d'adreces); simplement no hi ha encara cap valor assignat |
 | Mode d'interacció (resposta oberta, dibuix, etc.) | Ídem: `interaccio` és `null` a tot arreu, estructura preparada, contingut pendent. La interactivitat real (punts arrossegables, recàlcul en viu) exigiria una capa de renderitzat completament diferent de la que hi ha ara (`docs/render.js` genera PNG estàtics per disseny, no SVG/canvas en viu al navegador) — un canvi d'arquitectura real, no una dada per omplir |
 | Selector d'idioma visible | Amagat de la interfície a petició explícita ("mostra només la capa del català"). La capacitat multilingüe NO s'ha eliminat: `ui-strings.js` conserva les dues capes senceres, i `window.geoI18n.setLang("en")` (o `?lang=en` a la URL) segueix funcionant |
@@ -280,7 +287,7 @@ js/
     ordre-preguntes.js        — ordre de PRESENTACIÓ, separat de l'ordre del llibre — s'edita a mà
     guies-dades.js             — les 130 guies — (generat per parse_guies.py, no editar a mà)
     categories-tematiques-dades.js — classificació temàtica de les 130 preguntes en 6 categories (s'edita a mà)
-    itineraris-tematics-dades.js — els 6 itineraris temàtics fixos sobre les 115 visibles,
+    itineraris-tematics-dades.js — els 6 itineraris temàtics fixos sobre les 118 visibles,
                                 i els grups de preguntes entrellaçades (s'edita a mà)
     glossari-dades.js         — els 53 termes del glossari (s'edita a mà)
     demos-dades.js             — les 3 demostracions fixes, model de passos (s'edita a mà)
@@ -316,7 +323,7 @@ docs/
 
 Per al professorat (mai enllaçat des d'index.html):
 sol.html                      — índex de les solucions
-solucions/                    — 115 solucions treballades, una per pregunta visible
+solucions/                    — 118 solucions treballades, una per pregunta visible
 COORDINACIO-AGENTS-SOLUCIONS.md — regles per a qui hi escriu
 analitzador-geom.html         — genera una prova escrita (GENERAT, no editar)
 analitzador-geom-plantilla.html — la seva font
@@ -413,11 +420,11 @@ sobre el crema de la pàgina.
 ## Estat i propers passos
 
 **Les 130 de 130 preguntes tenen guia de demostració completa.** **122 de 130
-tenen imatge d'enunciat — les 8 restants són exactament les 8 preguntes
-d'`EXERCICIS_AMAGATS` sense imatge; cap pregunta visible es queda sense.**
+tenen imatge d'enunciat.** De les 8 restants, 5 són amagades i 3 són visibles
+(`q84`, `q87`, `q88`: trigonometria, v. la taula "No hi ha, i per què").
 **53 de 53 termes del glossari tenen figura** (completat — v.
 `docs/guies/NOTA-GLOSSARI-27-FIGURES.md`).
-**15 preguntes estan amagades de la llista** (i de "Anterior/Següent" i dels
+**12 preguntes estan amagades de la llista** (i de "Anterior/Següent" i dels
 suggeriments de l'itinerari) per decisió de contingut (mai
 esborrades). Filtres 2D/3D i de 5 categories temàtiques funcionant, amb icones
 pròpies i persistència de la tria a `localStorage`. Les tres demos
@@ -438,6 +445,8 @@ Pendents coneguts, cap dels quals bloqueja l'ús actual del lloc:
   bloquejat: obert per doble clic, la secció de descoberta surt buida i només
   es veu la llista escrita a mà. Per veure-la sencera cal servir el projecte
   (`python3 -m http.server`). La resta del lloc no en depèn.
+- `q84`, `q87` i `q88` són visibles i no tenen imatge d'enunciat (a la llista
+  hi surten amb l'etiqueta "sense figura").
 
 Historial complet de lliuraments (ordre cronològic, cada un amb la seva pròpia
 nota tècnica a `docs/guies/NOTA-*.md`): les 130 guies del llibre (lots 1-10,
@@ -456,10 +465,12 @@ d'ago. 2026 (`docs/AUDITORIA-RIGOR-GUIES.md`), el pas de
 "cercle" a "circumferència" als enunciats de `preguntes-dades.js` (el terme
 geomètric general —"sector de cercle" i similars— es manté allà on toca dins
 de les guies i el glossari), els sis itineraris temàtics
-(`docs/ITINERARIS-TEMATICS-DESIGN-NOTES.md`), les 115 solucions per al
+(`docs/ITINERARIS-TEMATICS-DESIGN-NOTES.md`), les 118 solucions per al
 professorat (`COORDINACIO-AGENTS-SOLUCIONS.md`), la prova escrita
-(`LLEGEIX-ME.md`) i l'auditoria de documentació d'ago. 2026
-(`docs/guies/NOTA-AUDITORIA-DOCUMENTACIO.md`).
+(`LLEGEIX-ME.md`), l'auditoria de documentació d'ago. 2026
+(`docs/guies/NOTA-AUDITORIA-DOCUMENTACIO.md`) i les correccions de set. 2026:
+mode fosc, solució de `q88`, figures amb retolat fals i xifres de la
+documentació (`docs/guies/NOTA-CORRECCIONS-SET-2026.md`).
 
 <!-- atribucio-centre:inici -->
 

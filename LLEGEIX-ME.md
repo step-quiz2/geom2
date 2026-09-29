@@ -76,7 +76,8 @@ set retalls de pàgina (`q31`, `q76`, `q78`, `q79`, `q105`, `q107`, `q114`) són
 del PDF, amb traç fi: encongits deixen de llegir-se. Tots dos casos es tracten
 igual que al lloc.
 
-**Les imatges van incrustades en base64.** Les 116 de les preguntes visibles.
+**Les imatges van incrustades en base64.** Els 116 fitxers d'imatge de les
+preguntes visibles (115 preguntes amb imatge; `q40_implicit` en porta dues).
 El fitxer passa d'uns 120 kB a uns 5 MB, i a canvi es pot desar a l'escriptori
 sense la carpeta del projecte al costat. Sense això, "fitxer únic" era mentida:
 n'hi havia prou amb moure'l perquè totes les figures donessin 404, i una

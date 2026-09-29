@@ -61,6 +61,7 @@ window.UI_LANGS = {
       back_to_list: "← All questions",
       prev: "← Previous",
       next: "Next →",
+      done_label: "explored",
     },
 
     guide: {
@@ -119,6 +120,37 @@ window.UI_LANGS = {
       reason_review_moviment: "trains the same idea — {move}",
       reason_fallback: "next in the list",
       continue_banner: "Continue where you left off:",
+    },
+
+    // Nom llegible de cada `moviment` de les guies (el slug de
+    // guies-dades.js, amb els guions canviats per _). El fa servir
+    // geoContingut.nomMoviment() per al suggeriment "entrena la
+    // mateixa idea — …" de l'itinerari: abans hi sortia el slug cru
+    // ("redueix-al-conegut"). verifica_projecte.py comprova que tot
+    // moviment de les guies tingui nom als dos idiomes.
+    moves: {
+      centre_per_simetria: "find the centre through symmetry",
+      redueix_al_conegut: "reduce the unknown to the known",
+      recompte_o_induccio: "count every case, or use induction",
+      invariant: "look for what doesn't change",
+      construeix_per_definir: "build it in order to define it",
+      contraexemple: "to refute, one counterexample is enough",
+      separa_i_reorienta: "split into pieces and reorient them",
+      simetria_i_demostra: "guess by symmetry, then prove",
+      distingeix_casos: "split into cases",
+      un_altre_pla: "repeat the argument in another plane",
+      dues_maneres: "look at the same thing in two ways",
+      identitat_com_a_figura: "the identity is the figure",
+      estirament: "stretch the figure in one direction",
+      homotecia: "scale from a point (homothety)",
+      cas_limit: "push it to the limiting case",
+      exhauriment: "approximate by exhaustion",
+      audita_la_demostracio: "put your own proof to the test",
+      linia_no_enunciada: "add a line the statement doesn't mention",
+      definicio_i_absurd: "unpack the definition and reach a contradiction",
+      informacio_no_usada: "use the information you haven't touched yet",
+      desenrotlla: "unroll the surface",
+      reflexio: "reflect, and the broken path becomes straight",
     },
 
     demo: {
@@ -195,6 +227,7 @@ window.UI_LANGS = {
       back_to_list: "← Totes les preguntes",
       prev: "← Anterior",
       next: "Següent →",
+      done_label: "explorat",
     },
 
     guide: {
@@ -248,6 +281,31 @@ window.UI_LANGS = {
       reason_review_moviment: "entrena la mateixa idea — {move}",
       reason_fallback: "la següent de la llista",
       continue_banner: "Continua on ho vas deixar:",
+    },
+
+    moves: {
+      centre_per_simetria: "troba el centre per simetria",
+      redueix_al_conegut: "redueix el desconegut al conegut",
+      recompte_o_induccio: "compta tots els casos, o fes-ho per inducció",
+      invariant: "busca el que no canvia",
+      construeix_per_definir: "construeix per definir",
+      contraexemple: "per refutar, en basta un contraexemple",
+      separa_i_reorienta: "separa les peces i reorienta-les",
+      simetria_i_demostra: "endevina per simetria, després demostra",
+      distingeix_casos: "distingeix els casos",
+      un_altre_pla: "repeteix l'argument en un altre pla",
+      dues_maneres: "mira la mateixa cosa de dues maneres",
+      identitat_com_a_figura: "la identitat és la figura",
+      estirament: "estira la figura en una sola direcció",
+      homotecia: "amplia o redueix des d'un punt (homotècia)",
+      cas_limit: "porta-ho al cas límit",
+      exhauriment: "aproxima per exhauriment",
+      audita_la_demostracio: "posa a prova la teva pròpia demostració",
+      linia_no_enunciada: "afegeix una línia que l'enunciat no menciona",
+      definicio_i_absurd: "desempaqueta la definició i arriba a l'absurd",
+      informacio_no_usada: "fes servir la informació que encara no has tocat",
+      desenrotlla: "desenrotlla la superfície",
+      reflexio: "reflecteix, i el camí trencat es torna recte",
     },
 
     demo: {

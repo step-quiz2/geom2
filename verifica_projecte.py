@@ -267,8 +267,9 @@ morts, revisats = [], set()
 # l'auditoria de documentació d'ago. 2026 aquí hi havia
 # `or arrel.startswith("./docs")`, és a dir, la comprovació es saltava
 # justament el directori on viuen gairebé totes les notes -- i on hi havia
-# set referències mortes sense declarar. `solucions/` sí que se salta: són
-# 115 fitxers de contingut que no citen documents de disseny.
+# set referències mortes sense declarar. `solucions/` sí que se salta: és
+# un fitxer de contingut per pregunta visible, i no citen documents de
+# disseny.
 for arrel, dirs, fitxers in os.walk("."):
     if ".git" in arrel or arrel.startswith("./solucions"): continue
     for n in fitxers:
@@ -663,6 +664,125 @@ if _desacords:
          % " ".join(_desacords))
 else:
     ok("l'enunciat duplicat a solucions/ coincideix amb preguntes-dades.js")
+
+# ------------------------- 15. solucions, noms de moviment i xifres vives
+# Origen: la revisió de set. 2026 va trobar tres coses que cap comprovació
+# no veia:
+#   · q88, visible des de l'ago. 2026, no tenia solució a solucions/ (i
+#     COORDINACIO-AGENTS-SOLUCIONS.md encara manava no escriure-la, perquè
+#     la llistava entre les amagades);
+#   · README, HANDOFF i COORDINACIO deien "15 amagades" i "115 visibles"
+#     quan n'hi havia 12 i 118 -- la §14 només mirava el glossari i les
+#     figures de Pista 2;
+#   · el suggeriment de repàs de l'itinerari ensenyava a l'alumne el slug
+#     intern del moviment ("redueix-al-conegut") en lloc d'un nom llegible.
+def _amagades_de_llista():
+    if not os.path.exists("js/ui/llista.js"):
+        return None
+    m = re.search(r"const\s+EXERCICIS_AMAGATS\s*=\s*\[(.*?)\]",
+                  open("js/ui/llista.js", encoding="utf-8").read(), re.S)
+    return re.findall(r'"([^"]+)"', m.group(1)) if m else None
+
+_AM = _amagades_de_llista()
+if _AM is None:
+    err("no trobo EXERCICIS_AMAGATS a js/ui/llista.js")
+elif P:
+    _vis = [q["id"] for q in P if q["id"] not in _AM]
+    _sol = set(n[:-5] for n in os.listdir("solucions") if n.endswith(".html")) \
+        if os.path.isdir("solucions") else set()
+
+    # a) cobertura de solucions
+    _sense_sol = [i for i in _vis if i not in _sol]
+    if _sense_sol:
+        err("preguntes VISIBLES sense solució a solucions/: %s"
+            % " ".join(_sense_sol))
+    else:
+        ok("tota pregunta visible (%d) té la seva solució a solucions/" % len(_vis))
+    _sol_amag = [i for i in _AM if i in _sol]
+    if _sol_amag:
+        avis("hi ha solució per a preguntes amagades, i "
+             "COORDINACIO-AGENTS-SOLUCIONS.md diu que no n'han de tenir: %s"
+             % " ".join(_sol_amag))
+
+    # b) xifres vives als documents que descriuen l'estat ACTUAL. Les notes
+    #    de lliurament (docs/guies/NOTA-*.md) no hi són: registren el que
+    #    era cert el dia que es van escriure, i no s'han de reescriure.
+    _n_am, _n_vis = len(_AM), len(_vis)
+    _n_sol = len([i for i in _vis if i in _sol])
+    _vis_sense_img = [q["id"] for q in P if q["id"] in _vis and not q.get("imatge")]
+    _PATRONS = [
+        (r"\b(\d+) preguntes\s+(?:estan\s+)?amagades", _n_am, "preguntes amagades"),
+        (r"\bLes (\d+) preguntes d'\s*`EXERCICIS_AMAGATS`", _n_am, "preguntes amagades"),
+        (r"\b(\d+) hidden questions", _n_am, "preguntes amagades"),
+        (r"\blist of (\d+)\s+question ids", _n_am, "preguntes amagades"),
+        (r"\bminus (\d+) hidden", _n_am, "preguntes amagades"),
+        (r"\| (\d+): `q18a", _n_am, "preguntes amagades"),
+        (r"\b(\d+) preguntes visibles", _n_vis, "preguntes visibles"),
+        (r"\bles (\d+) visibles", _n_vis, "preguntes visibles"),
+        (r"\b(\d+) visible questions", _n_vis, "preguntes visibles"),
+        (r"\| Visible questions \| (\d+)", _n_vis, "preguntes visibles"),
+        (r"\b(\d+) solucions (?:treballades|per al)", _n_sol, "solucions"),
+        (r"\b(\d+) worked solutions", _n_sol, "solucions"),
+        (r"\b(\d+) solution files on disk", _n_sol, "solucions"),
+        (r"\bis (\d+) solutions", _n_sol, "solucions"),
+        (r"\b(\d+) dels 53 termes", _amb_fig, "termes del glossari amb figura"),
+    ]
+    _malament = []
+    for _doc in ("README.md", "HANDOFF-COLD-START.md",
+                 "COORDINACIO-AGENTS-SOLUCIONS.md", "LLEGEIX-ME.md"):
+        if not os.path.exists(_doc):
+            continue
+        _txt = open(_doc, encoding="utf-8").read()
+        for _patro, _real, _que in _PATRONS:
+            for _m in re.finditer(_patro, _txt):
+                if int(_m.group(1)) != _real:
+                    _lin = _txt.count("\n", 0, _m.start()) + 1
+                    _malament.append("%s:%d diu %s %s, i n'hi ha %d"
+                                     % (_doc, _lin, _m.group(1), _que, _real))
+        # "N / N visible questions": les dues xifres
+        for _m in re.finditer(r"\b(\d+) / (\d+) visible questions", _txt):
+            if (int(_m.group(1)), int(_m.group(2))) != (_n_sol, _n_vis):
+                _lin = _txt.count("\n", 0, _m.start()) + 1
+                _malament.append("%s:%d diu %s / %s, i són %d / %d"
+                                 % (_doc, _lin, _m.group(1), _m.group(2), _n_sol, _n_vis))
+        if _vis_sense_img:
+            for _patro in (r"cap pregunta visible[^.\n]*es queda[^.\n]*sense",
+                           r"cap pregunta VISIBLE[^.\n]*es queda[^.\n]*sense",
+                           r"every question actually reachable[^.]*has an image"):
+                for _m in re.finditer(_patro, _txt):
+                    _lin = _txt.count("\n", 0, _m.start()) + 1
+                    _malament.append("%s:%d diu que cap pregunta visible no queda sense "
+                                     "imatge, i n'hi ha %d (%s)"
+                                     % (_doc, _lin, len(_vis_sense_img), " ".join(_vis_sense_img)))
+    if _malament:
+        for _x in _malament:
+            err("xifra desfasada: " + _x)
+    else:
+        ok("les xifres d'amagades, visibles i solucions als documents quadren "
+           "(%d / %d / %d)" % (_n_am, _n_vis, _n_sol))
+
+# c) cada moviment de les guies té nom llegible als dos idiomes
+_G15 = llegeix_global("js/data/guies-dades.js", "GUIES") or {}
+_slugs = sorted(set(g.get("moviment") for g in _G15.values() if g.get("moviment")))
+if os.path.exists("js/i18n/ui-strings.js") and _slugs:
+    _ui = open("js/i18n/ui-strings.js", encoding="utf-8").read()
+    _blocs = re.findall(r"^\s*moves:\s*\{(.*?)^\s*\},", _ui, re.S | re.M)
+    if len(_blocs) != 2:
+        err("ui-strings.js ha de tenir una secció `moves` a cada idioma "
+            "(n'hi ha %d)" % len(_blocs))
+    else:
+        _falten_noms = []
+        for _slug in _slugs:
+            _clau = _slug.replace("-", "_")
+            for _idioma, _bloc in zip(("en", "ca"), _blocs):
+                if not re.search(r"^\s*%s\s*:" % re.escape(_clau), _bloc, re.M):
+                    _falten_noms.append("%s (%s)" % (_slug, _idioma))
+        if _falten_noms:
+            err("moviments sense nom llegible a ui-strings.js `moves` (l'alumne "
+                "hi veuria el slug cru): %s" % ", ".join(_falten_noms))
+        else:
+            ok("els %d moviments de les guies tenen nom llegible als dos idiomes"
+               % len(_slugs))
 
 # ------------------------------------------------------------------ informe
 print("\n%d comprovacions passades" % len(oks))

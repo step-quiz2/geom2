@@ -290,8 +290,8 @@
    * Una línia i no un fitxer perquè el camí real és enganxar-lo a un
    * WhatsApp, a un correu o a una casella de resposta curta d'un
    * formulari: allà un adjunt fa nosa i un salt de línia es menja. Amb
-   * 115 preguntes visibles, el pitjor cas possible (haver-les fet totes)
-   * són 511 caràcters, i un cas normal de 25 preguntes en són 116 —
+   * 118 preguntes visibles, el pitjor cas possible (haver-les fet totes)
+   * són 523 caràcters, i un cas normal de 25 preguntes en són 116 —
    * cap dels dos és problema per a cap d'aquests canals.
    *
    * No hi ha res xifrat ni cap control d'integritat, a diferència del

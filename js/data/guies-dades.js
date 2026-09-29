@@ -4603,7 +4603,7 @@ window.GUIES = {
           "en": null
         },
         "text": {
-          "ca": "Dues imatges més sense enunciat. Totes dues amaguen la mateixa pregunta que q27_implicit: mesura el radi petit en funció del gran. (Nota d'aquesta figura: el primer panell es dibuixa com el quadrat inscrit estàndard —els 4 vèrtexs sobre el cercle— perquè l'escaneig original sembla tenir un detall addicional a dalt.)",
+          "ca": "Dues imatges més sense enunciat. Totes dues amaguen la mateixa mena de pregunta que q27_implicit: mesura la peça petita en funció de la gran. Al primer panell, un quadrat inscrit en una circumferència i, recolzat sobre el seu costat de dalt, un quadrat petit amb les dues cantonades de dalt sobre l'arc: quina mida té el petit al costat del gran? Al segon, el radi dels cercles petits en funció del radi del gran.",
           "en": null
         },
         "figura": null
@@ -4636,14 +4636,14 @@ window.GUIES = {
           "en": null
         },
         "text": {
-          "ca": "Al primer panell: la diagonal del quadrat és el diàmetre del cercle, 2R. Si el costat del quadrat és s, quina relació de Pitàgores lliga s amb R?\n\nAl segon panell: posa el centre del cercle gran a l'origen. El cercle esquerre és tangent per dins a (−R, 0), o sigui que el seu centre és a −R+r; el segon centre, a −R+3r; el quadrat va de −R+4r a −R+6r, amb els costats de dalt i de baix a ±r. Escriu que una cantonada de la dreta, (−R+6r, r), és sobre la circumferència i simplifica: la R² se t'anirà dels dos costats i et quedarà una relació ben neta entre R i r.",
+          "ca": "Al primer panell: el quadrat gran és inscrit, o sigui que la seva diagonal és el diàmetre, i si el costat és S, R² = S²/2. Posa el centre a l'origen: el costat de dalt del quadrat gran és a y = S/2. El quadrat petit, de costat t, hi seu a sobre i centrat, de manera que les seves cantonades de dalt són (±t/2, S/2 + t). Escriu que una d'aquestes cantonades és sobre la circumferència i fes servir R² = S²/2: et quedarà una equació de segon grau en t que es factoritza, amb una sola arrel positiva.\n\nAl segon panell: posa el centre del cercle gran a l'origen. El cercle esquerre és tangent per dins a (−R, 0), o sigui que el seu centre és a −R+r; el segon centre, a −R+3r; el quadrat va de −R+4r a −R+6r, amb els costats de dalt i de baix a ±r. Escriu que una cantonada de la dreta, (−R+6r, r), és sobre la circumferència i simplifica: la R² se t'anirà dels dos costats i et quedarà una relació ben neta entre R i r.",
           "en": null
         },
         "figura": null
       }
     ],
     "comprovacio": {
-      "ca": "Primer panell, quadrat de costat s=4: diagonal=4√2, per tant R=2√2≈2,83. Segon panell: t'ha de sortir 37r = 12R. Comprova que la cantonada hi cau de debò —amb R=37 i r=12, el quadrat arriba fins a x=35, i 12²+35² = 144+1225 = 1369 = 37². És el triple pitagòric (12, 35, 37) el que fa que aquesta figura tanqui amb números exactes.",
+      "ca": "Primer panell: t'ha de sortir t = S/5. Amb S=5 (i per tant R² = 12,5), el quadrat petit té costat 1 i la seva cantonada de dalt és a (0,5; 3,5): 0,25 + 12,25 = 12,5 = R², sobre la circumferència. El quadrat petit fa, doncs, 1/25 de l'àrea del gran. Segon panell: t'ha de sortir 37r = 12R. Comprova que la cantonada hi cau de debò —amb R=37 i r=12, el quadrat arriba fins a x=35, i 12²+35² = 144+1225 = 1369 = 37². És el triple pitagòric (12, 35, 37) el que fa que aquesta figura tanqui amb números exactes.",
       "en": null
     },
     "iDespres": {

@@ -24,7 +24,9 @@ architecture reference.
 python3 verifica_projecte.py
 ```
 
-It must print `Tot correcte.` (36 checks). If it doesn't, **stop and
+It must print `Tot correcte.` (the number of checks grows with every
+delivery — 36 when this line was first written, over 60 now; what matters
+is zero errors). If it doesn't, **stop and
 report** — you've been handed a repository in an unexpected state, and
 guessing why will waste more time than asking.
 
@@ -136,11 +138,12 @@ inspection, not memory, at the moment of writing:
 | Guides with a second image at Pista 2 | 32 / 130 |
 | Guide figures, by where they live | 129 at Pista 3 (nivell 2) + 32 at Pista 2 (nivell 1) + 1 at Pista 4 (`q15`, the only guide with no nivell-2 figure) = 162 |
 | Glossary terms | 53, **all 53 with a figure** (32 image files; some terms share one) |
-| Teacher-facing solutions | 115 / 115 visible questions (`solucions/`) |
-| Thematic itineraries | 6 fixed editorial paths over the 115 visible questions |
+| Teacher-facing solutions | 118 / 118 visible questions (`solucions/`; `verifica_projecte.py` now fails if a visible question has none) |
+| Thematic itineraries | 6 fixed editorial paths over the 118 visible questions |
 | Glossary terms detected inline | inside enunciat text AND inside Pista 1-4 text (never comprovació, never i-després) |
 | Thematic categories | 6 defined, 5 shown in the filter menu (aritmetica_algebra excluded, see §3) |
-| Hidden questions (excluded from list view, "Anterior/Següent", and itinerary suggestions — not deleted) | 15: `q18a q18b q19 q20 q21 q24 q34 q35 q67 q83 q84 q87 q88 q102 q106` |
+| Hidden questions (excluded from list view, "Anterior/Següent", and itinerary suggestions — not deleted) | 12: `q18a q18b q19 q20 q21 q24 q34 q35 q67 q83 q102 q106` (7 of them 2D, 5 3D). `q84`, `q87` and `q88` used to be hidden and were **published** in Aug 2026, when the maths review closed — never re-hide them (see README, "Exercicis amagats de la llista") |
+| Visible questions | 118 (81 2D + 37 3D) |
 | 2D / 3D split | 88 / 42 |
 | Intro demos | 3, each now a 6-step reveal-one-at-a-time flow (not the old "always visible" design) |
 | Written-exam generator | `analitzador-geom.html`, built from `js/data/preguntes-dades.js` + `EXERCICIS_AMAGATS`, with the 116 visible-question images embedded as base64 (see `LLEGEIX-ME.md`) |
@@ -172,6 +175,7 @@ NOTA-TOGGLE-DEFECTES                                    (border fix, new default
 NOTA-ENUNCIATS-D                                        (8 new enunciat images, 3 more hidden instead)
 NOTA-GLOSSARI-27-FIGURES                                (the last 27 terms: glossary now 53/53)
 NOTA-AUDITORIA-DOCUMENTACIO                             (doc/comment audit, Aug 2026 — this list included)
+NOTA-CORRECCIONS-SET-2026                               (dark mode, q88 solution, fig-107/121/059, stale numbers)
 ```
 
 Two documents outside `docs/guies/` belong to the same paper trail:
@@ -203,12 +207,13 @@ gaps:
    `docs/guies/NOTA-ENUNCIATS-D.md` (8 of the original 16 got a real
    image; the other 3 that had no natural neutral figure — q67, q102,
    q106 — were added to `EXERCICIS_AMAGATS` instead of forcing one).
-   The remaining 8 (`q21 q35 q67 q84 q87 q88 q102 q106`) are now
-   EXACTLY the imageless subset of `EXERCICIS_AMAGATS` — every question
-   actually reachable through the list, "Anterior/Següent", or the
-   itinerary has an image. If a hidden question is ever un-hidden,
-   check this table first: it may need an image before it can ship
-   visible.
+   Of the remaining 8 (`q21 q35 q67 q84 q87 q88 q102 q106`), 5 are hidden
+   and **3 are visible**: `q84`, `q87` and `q88`, the three trigonometry
+   questions published in Aug 2026. They show a "sense figura" badge in
+   the list. (Until Sep 2026 this item claimed that every visible
+   question had an image: true after NOTA-ENUNCIATS-D, false since those
+   three were published.) If a hidden question is ever un-hidden, check
+   this first: it may need an image before it can ship visible.
 3. **`sol.html`'s live-discovery section needs a server.** It probes for
    `solucions/<id>.html` with `fetch()`, which `file://` blocks — the very
    constraint the whole project is built around. Opened by double-click it
@@ -320,7 +325,7 @@ comment block before editing — it explains why each piece of state is
 deliberately kept separate from the others.
 
 **Teacher-facing surfaces** are separate from the SPA and must stay that way:
-`sol.html` + `solucions/` (115 worked solutions, rules in
+`sol.html` + `solucions/` (118 worked solutions, rules in
 `COORDINACIO-AGENTS-SOLUCIONS.md`) and `analitzador-geom.html` (written-exam
 generator, source `analitzador-geom-plantilla.html`, built by
 `build_analitzador_geom.py`, documented in `LLEGEIX-ME.md`). Nothing under
