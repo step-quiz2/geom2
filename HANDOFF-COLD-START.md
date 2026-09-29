@@ -178,6 +178,7 @@ NOTA-AUDITORIA-DOCUMENTACIO                             (doc/comment audit, Aug 
 NOTA-CORRECCIONS-SET-2026                               (dark mode, q88 solution, fig-107/121/059, stale numbers)
 NOTA-FLUX-ZIP-SET-2026                                  (upload Action: _ESBORRA.txt, regenera, verify, smoke test)
 NOTA-COHERENCIA-SET-2026                                (order/deps fixed, 9 difficulties raised, glossary 56, q84/q87/q88 images, q62 2πRh)
+NOTA-AULA-I-QUALITAT-SET-2026                           (search, projector mode, print sheet, local fonts, lossless PNGs, export.js/amagats.py)
 ```
 
 Two documents outside `docs/guies/` belong to the same paper trail:
@@ -315,8 +316,10 @@ mutual-exclusion invariant: never both off), the category filter (separate
 state, different invariant: empty selection means "all"), the
 hidden-exercises exclusion list (`EXERCICIS_AMAGATS`, exposed as
 `window.geoLlista.esAmagada` so `detall.js` and `itinerari.js` don't
-duplicate it), and the **"Copia el meu codi"** block that produces the
-`GEO1-…` string the written-exam generator reads. Read its own header
+duplicate it; Python reads it only through `amagats.py`), and the text
+search box. The **"Copia el meu codi"** block that produces the `GEO1-…`
+string the written-exam generator reads moved to `js/ui/export.js` in Sep
+2026. Read its own header
 comment block before editing — it explains why each piece of state is
 deliberately kept separate from the others.
 

@@ -49,7 +49,7 @@ ESSENCIALS = [
     "parse_guies.py",
     "js/data/preguntes-dades.js", "js/data/guies-dades.js",
     "js/nucli/contingut.js", "js/nucli/progres.js", "js/nucli/router.js",
-    "js/nucli/guies.js", "js/ui/llista.js", "js/ui/detall.js", "js/ui/main.js",
+    "js/nucli/guies.js", "js/ui/export.js", "js/ui/llista.js", "js/ui/detall.js", "js/ui/main.js",
     "js/i18n/ui-strings.js", "js/i18n/i18n-core.js",
     "css/tokens.css", "css/base.css", "css/components.css",
     "docs/HAND_DRAWN_GEOMETRY_TECHNIQUE.md", "docs/manifest-figures.tsv",
@@ -172,7 +172,8 @@ if os.path.exists("index.html"):
     ordre = ["js/data/preguntes-dades.js", "js/data/guies-dades.js",
              "js/i18n/ui-strings.js", "js/i18n/i18n-core.js",
              "js/nucli/contingut.js", "js/nucli/guies.js",
-             "js/nucli/router.js", "js/ui/detall.js", "js/ui/main.js"]
+             "js/nucli/router.js", "js/ui/export.js", "js/ui/llista.js",
+             "js/ui/detall.js", "js/ui/main.js"]
     # Es busca la posició DE L'ETIQUETA <script>, no la primera aparició del
     # nom: index.html porta una capçalera de comentaris que enumera els
     # fitxers, i buscar-hi el nom pelat donava un fals positiu d'ordre.
@@ -409,8 +410,11 @@ if GR is not None and P is not None:
 # figures que necessiten tractament especial el rebin. No comprova
 # l'analitzador GENERAT (analitzador-geom.html): comprova les FONTS, perquè
 # un analitzador vell i correcte no ha de fer passar un canvi trencat.
-if os.path.exists("js/ui/llista.js") and os.path.exists("analitzador-geom-plantilla.html"):
-    llista = open("js/ui/llista.js", encoding="utf-8").read()
+# Des del set. 2026 el codi de l'alumne es genera a js/ui/export.js (abans
+# era dins de llista.js); el nom de la variable es manté per no remoure la
+# resta de la secció.
+if os.path.exists("js/ui/export.js") and os.path.exists("analitzador-geom-plantilla.html"):
+    llista = open("js/ui/export.js", encoding="utf-8").read()
     plant = open("analitzador-geom-plantilla.html", encoding="utf-8").read()
 
     # El prefix del format ha de ser el mateix als dos costats. Si algú el
@@ -418,7 +422,7 @@ if os.path.exists("js/ui/llista.js") and os.path.exists("analitzador-geom-planti
     # símptoma (una prova buida) no assenyala la causa.
     m = re.search(r'return "(GEO\d+)-" \+ ids\.join', llista)
     if not m:
-        err("llista.js: no s'ha trobat formataCodi() amb el prefix GEO<n>-")
+        err("export.js: no s'ha trobat formataCodi() amb el prefix GEO<n>-")
     elif ("GEO" not in plant) or ("/^GEO\\d+-?/i" not in plant):
         err("la plantilla de l'analitzador no reconeix el prefix %s del codi" % m.group(1))
     else:
@@ -430,7 +434,7 @@ if os.path.exists("js/ui/llista.js") and os.path.exists("analitzador-geom-planti
     if "geo-export-codi" in llista and "geo-export-btn" in llista:
         ok("el codi es pot copiar i, si falla, seleccionar a mà")
     else:
-        err("llista.js: falta el camp de reserva del codi (geo-export-codi)")
+        err("export.js: falta el camp de reserva del codi (geo-export-codi)")
 
     # esInvertida i esCrop NO són decoració: q42 és traç clar sobre fons fosc
     # (94 % de píxels foscos) i sense invertir-la s'imprimeix com un rectangle
@@ -687,11 +691,12 @@ else:
 #   · el suggeriment de repàs de l'itinerari ensenyava a l'alumne el slug
 #     intern del moviment ("redueix-al-conegut") en lloc d'un nom llegible.
 def _amagades_de_llista():
-    if not os.path.exists("js/ui/llista.js"):
+    # Lectura única, compartida amb build_analitzador_geom.py (amagats.py).
+    import amagats
+    try:
+        return amagats.llegeix()
+    except amagats.ErrorAmagats:
         return None
-    m = re.search(r"const\s+EXERCICIS_AMAGATS\s*=\s*\[(.*?)\]",
-                  open("js/ui/llista.js", encoding="utf-8").read(), re.S)
-    return re.findall(r'"([^"]+)"', m.group(1)) if m else None
 
 _AM = _amagades_de_llista()
 if _AM is None:
@@ -852,6 +857,32 @@ if _O17 and P:
         err("preguntes més fàcils que una de la qual depenen: %s" % "; ".join(_dif_mal))
     else:
         ok("cap pregunta no és més fàcil que una de la qual depèn")
+
+# ------------------------------------------------------ 18. fonts locals
+# Des del set. 2026 les fonts es serveixen des del repositori (css/fonts.css,
+# assets/fonts/): el lloc es veu bé sense xarxa i no envia l'adreça IP de
+# l'alumnat a Google. Cap pàgina no ha de tornar a carregar-les de fora.
+_externes = []
+for _arrel, _dirs, _fs in os.walk("."):
+    if ".git" in _arrel or "node_modules" in _arrel: continue
+    for _n in _fs:
+        if _n.endswith(".html"):
+            _c = os.path.join(_arrel, _n)
+            if "fonts.googleapis" in open(_c, encoding="utf-8").read():
+                _externes.append(_c)
+if _externes:
+    err("pàgines que encara carreguen Google Fonts: %s" % ", ".join(sorted(_externes)))
+else:
+    ok("cap pàgina no carrega fonts de fora del repositori")
+if os.path.exists("css/fonts.css"):
+    _ff = re.findall(r"url\(\.\./(assets/fonts/[^)]+)\)", open("css/fonts.css", encoding="utf-8").read())
+    _falten_f = [f for f in _ff if not os.path.exists(f)]
+    if not _ff or _falten_f:
+        err("css/fonts.css apunta a fitxers que no hi són: %s" % _falten_f)
+    else:
+        ok("els %d fitxers de css/fonts.css hi són" % len(set(_ff)))
+else:
+    err("falta css/fonts.css")
 
 # ------------------------------------------------------------------ informe
 print("\n%d comprovacions passades" % len(oks))

@@ -42,6 +42,7 @@ window.UI_LANGS = {
 
     list: {
       question_count: "{n} questions",
+      question_count_one: "{n} question",
       no_results: "No questions match this filter.",
       no_image_badge: "no figure",
       open: "Open",
@@ -52,6 +53,10 @@ window.UI_LANGS = {
       export_manual: "Couldn't copy: select it and press Ctrl+C",
       export_field_label: "Your code",
       export_file: "or download it as a file",
+      search_placeholder: "Search by word or number…",
+      search_label: "Search the questions",
+      search_note: "Searching all questions: the filters below don't apply while there's text in the search box.",
+      search_no_results: "No question matches this search.",
     },
 
     detail: {
@@ -62,6 +67,11 @@ window.UI_LANGS = {
       prev: "← Previous",
       next: "Next →",
       done_label: "explored",
+      projector_on: "Projector mode",
+      projector_off: "Leave projector mode",
+      projector_help: "→ or space: next hint (then next question) · ←: previous question · Esc: leave",
+      print: "Print the worksheet",
+      print_note: "Prints the question, its figure and the whole guide (all four hints, the check and what comes next).",
     },
 
     guide: {
@@ -208,6 +218,7 @@ window.UI_LANGS = {
 
     list: {
       question_count: "{n} preguntes",
+      question_count_one: "{n} pregunta",
       no_results: "Cap pregunta coincideix amb aquest filtre.",
       no_image_badge: "sense figura",
       open: "Obre",
@@ -218,6 +229,10 @@ window.UI_LANGS = {
       export_manual: "No s'ha pogut copiar: selecciona'l i prem Ctrl+C",
       export_field_label: "El teu codi",
       export_file: "o descarrega'l com a fitxer",
+      search_placeholder: "Cerca per paraula o número…",
+      search_label: "Cerca a les preguntes",
+      search_note: "Cercant a totes les preguntes: els filtres de sota no s'apliquen mentre hi ha text a la cerca.",
+      search_no_results: "Cap pregunta coincideix amb aquesta cerca.",
     },
 
     detail: {
@@ -228,6 +243,11 @@ window.UI_LANGS = {
       prev: "← Anterior",
       next: "Següent →",
       done_label: "explorat",
+      projector_on: "Mode projector",
+      projector_off: "Surt del mode projector",
+      projector_help: "→ o espai: pista següent (i, al final, pregunta següent) · ←: pregunta anterior · Esc: surt",
+      print: "Imprimeix la fitxa",
+      print_note: "Imprimeix la pregunta, la seva figura i la guia sencera (les quatre pistes, la comprovació i l'i després).",
     },
 
     guide: {
