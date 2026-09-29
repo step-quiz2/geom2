@@ -41,6 +41,9 @@ def main():
         return
     fitxers = sys.argv[1:] or sorted(glob.glob(os.path.join(BASE, "assets", "img", "**", "*.png"),
                                                recursive=True))
+    # Un fitxer que ja no existeix (p. ex. esborrat per un _ESBORRA.txt) no és
+    # cap error: simplement no hi ha res a optimitzar.
+    fitxers = [f for f in fitxers if os.path.isfile(f)]
     abans = despres = canviats = 0
     for f in fitxers:
         with open(f, "rb") as fh:

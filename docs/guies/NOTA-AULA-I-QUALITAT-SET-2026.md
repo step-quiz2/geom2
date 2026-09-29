@@ -24,9 +24,14 @@ o amb un passador de diapositives:
 L'estat és una classe a `<html>`, no a `#app`: sobreviu a la navegació entre
 preguntes. No es desa: és per a una sessió de classe. Si el focus és en un
 botó, l'espai només fa el que fa sempre (activar-lo), perquè una pulsació no
-reveli dues pistes. En entrar-hi o sortir-ne es torna a pintar la pregunta
-(la figura recalcula l'alçada amb l'amplada nova), i per tant la guia torna a
-començar: a la pissarra és el que es vol.
+reveli dues pistes. En entrar-hi o sortir-ne la figura recalcula l'alçada
+amb l'amplada nova (`ajustaAlcada`, també en girar el mòbil o canviar la mida
+de la finestra), **sense** tornar a pintar la pregunta: les pistes obertes
+continuen obertes.
+
+> **Corregit a la revisió posterior.** La primera versió tornava a pintar la
+> pregunta (un `hashchange` sintètic). Això tancava les pistes obertes i, a
+> més, comptava una visita falsa a l'itinerari en curs.
 
 Provat: →→ obre dues pistes, PageDown×2 les altres dues i el peu, → passa a
 la pregunta següent, ← torna, Esc surt i torna la capçalera.
@@ -40,6 +45,16 @@ s'ha arribat en pantalla. És una còpia a part (`pintaFitxaImpresa`, classe
 `.fitxa-impresa`) que només es veu en `@media print`: imprimir no obre cap
 pista a la pantalla, i la fitxa surt sempre igual. Peu de pàgina amb el nom
 del lloc i "Qüestió N".
+
+Les figures de la fitxa porten `data-src`, no `src`: no es baixen fins que
+es prem el botó o Ctrl+P (`imprimeix()` les carrega, n'espera la càrrega
+—amb un sostre de 8 s— i llavors obre el diàleg). Des del menú del navegador
+només hi ha l'avís `beforeprint`, que no pot esperar: allà potser no arriben a
+temps.
+
+> **Corregit a la revisió posterior.** La primera versió posava `src`
+> directament: cada pregunta oberta baixava també les figures de les quatre
+> pistes, encara que no s'imprimís res. Amb dades mòbils, un cost inútil.
 
 Sempre **negre sobre blanc**: un bloc `@media print` al final de
 `css/tokens.css` fixa els colors del paper per damunt del mode fosc (sense
