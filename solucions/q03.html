@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quantes rosetes de polígons regulars tanquen exactament — Solució — Geometria</title>
+<meta name="description" content="El comptatge d'angles que decideix quines combinacions de polígons regulars poden envoltar un sol vèrtex d'un mosaic — i per què això no és tota la resposta.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../css/tokens.css?v=5">
+<link rel="stylesheet" href="../css/base.css?v=5">
+<link rel="stylesheet" href="../css/components.css?v=5">
+<link rel="stylesheet" href="sol.css?v=1">
+</head>
+<body>
+
+<header class="sol-header">
+  <span class="eyebrow">Qüestió 03 · pàg. 25 del llibre · solució</span>
+  <h1 class="sol-header__title">Quantes rosetes de polígons regulars tanquen exactament</h1>
+</header>
+
+<section class="sol-enunciat">
+  <p class="question-entry__prompt">Quines són totes les maneres diferents de fer dissenys de mosaic simètrics amb polígons regulars?</p>
+  <div class="sol-enunciat__figures sol-enunciat__figures--single"><figure class="question-entry__figure"><div class="question-entry__figure-frame"><img src="../assets/img/fig-132.png" alt="Figura de l'enunciat de la Qüestió 03" loading="lazy"></div></figure></div>
+</section>
+
+<section class="solucio">
+  <div class="solucio__marc">
+    <span class="solucio__eyebrow">Solució</span>
+    <div class="solucio__pas"><p class="solucio__pas-titol">Què vol dir "encaixar" en un mosaic</p><p class="solucio__text">A cada punt on es toquen diversos polígons d'un mosaic, els seus angles interiors s'hi han d'ajuntar sumant <strong>exactament 360°</strong>: ni menys —hi quedaria un buit obert— ni més —se sobreposarien uns polígons amb els altres. La pregunta "quants dissenys simètrics hi ha" es converteix, doncs, en una de comptar: quines combinacions de polígons regulars, sumant els seus angles interiors, arriben a exactament 360°?</p></div><div class="solucio__pas"><p class="solucio__pas-titol">Provar-ho amb el cas més senzill</p><p class="solucio__text">Un hexàgon regular té un angle interior de 120°. Tres hexàgons ajuntats en un mateix vèrtex sumen <strong>3×120°=360°</strong>: tanquen exactament, sense buit ni sobreposició —el patró clàssic del rusc d'abelles. En canvi, dos hexàgons més un quadrat (90°) sumen <strong>120+120+90=330°</strong>: hi queda una escletxa oberta de 30° que cap polígon regular hi encaixa.</p><figure class="solucio__figura"><img src="../assets/img/pistes/fig-179.png" alt="Figura de la construcció — Provar-ho amb el cas més senzill" loading="lazy"><figcaption class="solucio__figura-nota">L'angle interior d'un hexàgon regular: 120°.</figcaption></figure></div><div class="solucio__pas"><p class="solucio__pas-titol">Recórrer totes les combinacions possibles</p><p class="solucio__text">Repetint el mateix comptatge per a cada polígon regular, i buscant sempre la suma <strong>exacta</strong> de 360°: amb <strong>triangles</strong> (60°) en calen exactament 6. Amb <strong>quadrats</strong> (90°), exactament 4. Amb <strong>pentàgons</strong> (108°), 3 en fan 324° —no arriben— i 4 en farien 432° —s'hi passen—, de manera que cap nombre de pentàgons no tanca. Amb <strong>hexàgons</strong> (120°), exactament 3. Amb <strong>heptàgons</strong> (≈128,57°) i amb qualsevol polígon de més costats, 2 còpies no arriben i 3 ja se n'excedeixen: cap d'aquests polígons no pot tapissar el pla ell sol.</p><p class="solucio__text">Val la pena aturar-se en un error fàcil de cometre. 3, 4 o 5 triangles equilàters fan 180°, 240° i 300°, i cap d'aquestes configuracions <em>no</em> serveix per a un mosaic: hi deixen un buit obert. Les sumes <em>per sota</em> de 360° són la condició d'una altra pregunta —la dels poliedres regulars, q08b— on justament cal que sobri angle perquè la figura s'aixequi cap a la tercera dimensió. Aquí, al pla, tot allò que no siguin 360° exactes deixa un forat.</p><p class="solucio__text">Si es permet <strong>barrejar</strong> polígons diferents en un mateix vèrtex, la llista creix, però continua sent finita: hi ha exactament <strong>17</strong> combinacions de polígons regulars els angles de les quals sumen 360°. Unes quantes són fàcils de trobar provant: un quadrat i dos octàgons (90+135+135), un triangle i dos dodecàgons (60+150+150), un quadrat, un hexàgon i un dodecàgon (90+120+150), dos triangles i dos hexàgons (60+60+120+120), tres triangles i dos quadrats (60+60+60+90+90). I n'hi ha de força exòtiques: un triangle, un heptàgon i un polígon de 42 costats sumen 60 + 900/7 + 7200/42 = 360° <em>exactes</em>. Cadascuna d'aquestes combinacions és una <em>roseta vàlida</em>: pot envoltar un únic vèrtex sense deixar-hi buit ni sobreposició.</p><figure class="solucio__figura"><img src="../assets/img/pistes/fig-069.png" alt="Figura de la construcció — Recórrer totes les combinacions possibles" loading="lazy"><figcaption class="solucio__figura-nota">Esquerra: tres hexàgons tanquen exactament (120+120+120=360°). Dreta: dos hexàgons i un quadrat deixen 30° oberts (120+120+90=330°) —una roseta que no tanca.</figcaption></figure></div><div class="solucio__pas"><p class="solucio__pas-titol">El que aquest comptatge demostra, i el que no</p><p class="solucio__text">Val la pena aturar-se a mirar amb precisió què s'ha demostrat. La condició dels 360° és una condició <strong>local</strong>, vàlida per a un sol vèrtex: diu quines rosetes de polígons poden existir al voltant d'un punt —i, sobretot, quines no poden existir de cap manera, perquè sumen menys o més de 360°. El que aquesta condició <em>no</em> diu és si, un cop tenim una roseta vàlida en un vèrtex, aquell mateix patró es pot continuar repetint fins a cobrir tot el pla sense encallar-se més enllà. Hi ha combinacions que tanquen perfectament en un primer vèrtex i que, en intentar estendre el mosaic al vèrtex veí, deixen de quadrar.</p><p class="solucio__text">Aquesta distinció —<em>una roseta és possible en un vèrtex</em> davant de <em>un mosaic sencer existeix</em>— és exactament la mateixa que ja apareixia a q08b amb els poliedres regulars (allà, angle <em>menor</em> que 360° perquè la figura s'aixequi cap a la tercera dimensió, no <em>igual</em>). La diferència és que, en aquell cas, cadascuna de les cinc rosetes que superaven el comptatge donava efectivament un sòlid real; aquí, en canvi, no totes hi arriben. De les 17 rosetes que tanquen, només <strong>11</strong> es poden estendre a un mosaic amb tots els vèrtexs iguals: les 3 d'un sol polígon (triangles, quadrats, hexàgons) i 8 de barrejades. La del triangle + heptàgon + polígon de 42 costats, per exemple, tanca perfectament el primer vèrtex i s'encalla immediatament al veí. Aquesta segona meitat no es resol comptant angles: cal dibuixar, vèrtex rere vèrtex.</p></div>
+    <div class="solucio__resultat">
+      <span class="solucio__resultat-eyebrow">En resum</span>
+      <p class="solucio__resultat-text">Amb un sol tipus de polígon només n'hi ha tres: 6 triangles, 4 quadrats o 3 hexàgons per vèrtex. Si es permet barrejar-los, el comptatge d'angles a 360° dona 17 rosetes possibles al voltant d'un punt. Però aquesta condició és només <em>local</em>: de les 17, només 11 arriben a estendre's en un mosaic que cobreixi tot el pla amb tots els vèrtexs iguals. Saber quines exigeix dibuixar vèrtex rere vèrtex, no només sumar angles.</p>
+    </div>
+    <div class="solucio__pas"><p class="solucio__pas-titol">Comprovació</p><p class="solucio__text">Sis triangles: 6×60°=360° ✓. Quatre quadrats: 4×90°=360° ✓. Tres hexàgons: 3×120°=360° ✓. Tres pentàgons: 3×108°=324°, no arriba. El comptatge d'angles només confirma que aquestes rosetes són possibles en un vèrtex —no que el mosaic complet s'aconsegueixi estendre sense entrebancs pel pla.</p></div>
+  </div>
+</section>
+
+<footer class="sol-footer">
+  <p>Solució redactada a partir de les quatre pistes de la guia d'aquest exercici — geometria, llibre complet.</p>
+</footer>
+
+</body>
+</html>

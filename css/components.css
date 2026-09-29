@@ -1,0 +1,1237 @@
+/*
+  PROJECTE:     Geometria — preguntes del llibre (llibre complet, p. 1-193)
+  FITXER:       css/components.css
+  ROL:          Components interactius de UI (enllaç que cobreix una
+                entrada, botó de pista, navegació anterior/següent). Es
+                manté separat de base.css a propòsit (§3 de
+                PROPOSTA-ARQUITECTURA.md ja preveu aquest fitxer): base.css
+                defineix el ritme de lectura i la signatura visual del
+                "llibre obert"; aquest fitxer defineix com es toca i es
+                navega per damunt d'aquell ritme, sense barrejar les dues
+                responsabilitats en un sol full.
+  ARQUITECTURA: Es carrega després de base.css. Cap regla d'aquí redefineix
+                tokens (tot surt de custom properties de tokens.css, com a
+                la resta del sistema).
+  DEPENDÈNCIES: css/tokens.css, css/base.css (dona per fet .question-entry
+                i similars ja definits allà).
+*/
+
+/* ---------- Capçalera fixa del lloc (index.html) ---------- */
+
+.site-header {
+  max-width: var(--measure-wide);
+  margin-inline: auto;
+  padding-inline: var(--space-5);
+  padding-top: var(--space-5);
+}
+
+@media (max-width: 640px) {
+  .site-header {
+    padding-inline: var(--space-4);
+  }
+}
+
+.site-header__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.site-header__title {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+/* .site-header__lang: eliminat (selector d'idioma amagat de la UI,
+   §UI-UX -- v. js/ui/main.js forcaIdiomaCatala(). Cap altra classe
+   d'aquest fitxer en depenia). */
+
+/* ---------- Filtre 2D/3D (toggle tipus iPad, dins de #app -- v.
+   js/ui/llista.js) ---------- */
+
+.dim-filtre {
+  display: flex;
+  gap: var(--space-2);
+  margin: var(--space-4) 0;
+}
+
+.dim-filtre__toggle {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  letter-spacing: var(--tracking-mono);
+  color: var(--ink-soft);
+  background: var(--paper-raised);
+  border: var(--stroke-hairline) solid var(--rule-strong);
+  border-radius: 999px;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.dim-filtre__toggle[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: transparent;
+  color: var(--paper);
+}
+
+.dim-filtre__toggle:hover { border-color: var(--pencil); }
+.dim-filtre__toggle[aria-pressed="true"]:hover { border-color: transparent; }
+.dim-filtre__toggle:focus-visible {
+  outline: 2px solid var(--pencil);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* ---------- Boto "Descarrega la meva llista" (js/ui/llista.js,
+   exportaExplorades) ----------
+   Deliberadament diferent visualment dels toggles .dim-filtre__toggle i
+   .cat-filtre__toggle de sota: aquests canvien que es veu EN AQUESTA
+   pagina (estat, amb aria-pressed); aquest boto dispara una ACCIO
+   (una descarrega) que no te "actiu/inactiu" -- per aixo no porta
+   aria-pressed ni el mateix look de pastilla seleccionable, i pren la
+   vora --pencil (l'accent de "el que hi afegeix l'alumne" a tot el
+   projecte, v. README) en lloc de --rule-strong. */
+.export-explorades__boto {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  letter-spacing: var(--tracking-mono);
+  color: var(--ink);
+  background: var(--paper-raised);
+  border: var(--stroke-hairline) solid var(--pencil);
+  border-radius: 999px;
+  padding: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-4);
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.export-explorades__boto:hover { background: var(--pencil); color: var(--paper); }
+.export-explorades__boto:focus-visible {
+  outline: 2px solid var(--pencil);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* Camp de nomes lectura amb el codi (apareix en copiar-lo). Monoespaiat
+   i seleccionable sencer: si el porta-retalls falla, aquest camp es el
+   cami de sortida i ha de ser comode de seleccionar a ma. */
+.export-explorades__codi {
+  display: block;
+  width: 100%;
+  max-width: 34rem;
+  margin: 0 0 var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  color: var(--ink);
+  background: var(--paper-raised);
+  border: var(--stroke-hairline) solid var(--rule);
+  border-radius: var(--radius-sm);
+}
+.export-explorades__codi[hidden] { display: none; }
+
+/* Sortida secundaria (fitxer): enllac de text, no un segon boto -- no ha
+   de competir visualment amb el cami principal, que es el codi. */
+.export-explorades__fitxer {
+  display: inline;
+  padding: 0;
+  margin: 0 0 var(--space-4);
+  border: none;
+  background: none;
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  color: var(--ink-muted, var(--ink));
+  opacity: 0.75;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.export-explorades__fitxer:hover { opacity: 1; }
+.export-explorades__fitxer:focus-visible {
+  outline: 2px solid var(--pencil);
+  outline-offset: 2px;
+}
+
+/* ---------- Filtre de categories tematiques (menu de seleccio multiple,
+   js/ui/llista.js) ---------- */
+
+.cat-filtre {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+}
+
+.cat-filtre__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--paper-raised);
+  border: var(--stroke-hairline) solid var(--rule-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1);
+  cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+.cat-filtre__icon {
+  width: 26px;
+  height: 26px;
+  display: block;
+  /* les icones son PNG negre-sobre-transparent (mix-blend-mode ja les fa
+     transparents al fons de paper, com la resta de figures del projecte) */
+  mix-blend-mode: multiply;
+}
+
+.cat-filtre__toggle[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: transparent;
+}
+.cat-filtre__toggle[aria-pressed="true"] .cat-filtre__icon {
+  /* icona negra -> blanca sobre el fons fosc del boto actiu; les icones
+     son monocromatiques (tinta sola), invert(1) les converteix net */
+  filter: invert(1);
+  mix-blend-mode: normal;
+}
+
+.cat-filtre__toggle:hover { border-color: var(--pencil); }
+.cat-filtre__toggle[aria-pressed="true"]:hover { border-color: transparent; }
+.cat-filtre__toggle:focus-visible {
+  outline: 2px solid var(--pencil);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* ---------- Enllaç que cobreix tota l'entrada de la llista ---------- */
+/*
+  Patró "targeta clicable sencera" fet amb un <a> real (no un onclick a
+  un <li>) per accessibilitat: focus/tab natural, "obrir en pestanya
+  nova" del navegador segueix funcionant. position:absolute cobrint tot
+  .question-entry, que ja té position:relative (base.css).
+*/
+.question-entry {
+  position: relative;
+}
+
+.question-entry__link-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* El focus-ring va a l'entrada sencera, no només a l'enllaç envoltat */
+  border-radius: var(--radius-sm);
+}
+
+.question-entry__link-cover:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ---------- Botó de pista (detall) ---------- */
+
+.hint-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  border: var(--stroke-hairline) solid var(--rule-strong);
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--ink-soft);
+  font-family: var(--font-serif);
+  font-size: var(--fs-body);
+  transition: border-color var(--dur-fast) var(--ease-settle),
+    color var(--dur-fast) var(--ease-settle);
+}
+
+.hint-button:hover {
+  border-color: var(--pencil-soft);
+  color: var(--ink);
+}
+
+.hint-button[aria-expanded="true"] {
+  border-color: var(--pencil);
+  color: var(--ink);
+}
+
+.hint-text {
+  margin-top: var(--space-3);
+  padding-left: var(--space-4);
+  border-left: var(--stroke-rule) solid var(--pencil-soft);
+  color: var(--ink-soft);
+  max-width: var(--measure);
+}
+
+/*
+  Avís de contingut sense traduir (meta.untranslated_notice a
+  ui-strings.js): discret, no un banner d'alerta — és informatiu, no un
+  error.
+*/
+.untranslated-notice {
+  margin-top: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+/* ---------- Navegació anterior/següent i tornada a la llista (detall) ---------- */
+
+.detail-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin-top: var(--space-7);
+  padding-top: var(--space-4);
+  border-top: var(--stroke-hairline) solid var(--rule);
+}
+
+/*
+  NAV DE DALT (--top), afegida ago. 2026. Mateix contingut que .detail-nav
+  de baix (reutilitza pintaNavegacio), però:
+   - position: sticky, no fixed. S'enganxa a dalt en fer scroll SENSE
+     sortir del flux del document ni necessitar z-index ni padding-top
+     de compensació a la resta de la pàgina — un fixed exigiria totes
+     dues coses i, en un Chromebook amb barra d'eines mòbil que apareix
+     i desapareix, un fixed calculat amb vh és precisament el tipus de
+     salt de layout que --figure-slot-h (tokens.css) ja evita en un
+     altre lloc; sticky no té aquest problema perquè no depèn de vh.
+   - to de --paper amb --rule per sota (no --rule-strong): és una barra
+     utilitària de pas, no un títol; el pes visual l'ha de continuar
+     tenint l'enunciat, no la navegació.
+   - mateixos --detail-nav__back i --detail-nav__adjacent (definits més
+     avall), sense duplicar-ne l'estil.
+
+  AJUST D'ESPAIS (petició ago. 2026, amb captura de mòbil):
+   1. .page reserva --space-6 (52px desktop) / --space-5 (32px mòbil) de
+      buit per damunt del primer fill — pensat per a la resta de vistes
+      (llista, etc.), no per a aquesta nav sticky, que queda amb massa
+      aire per sobre. margin-top negatiu de -80% d'aquell valor: deixa
+      el 20% original i "estalvia" la resta pujant la nav cap amunt dins
+      del seu propi flux. No es toca .page (l'usen totes les vistes);
+      l'ajust viu només aquí, i per això es fa amb calc() sobre els
+      mateixos tokens en lloc d'un valor fix — es manté correcte tant a
+      desktop com al breakpoint de 640px sense duplicar la regla.
+   2. border-top afegit (abans no n'hi havia — només border-bottom): la
+      persona ho descriu com "el menú... amb les dues línies fines",
+      és a dir que ha de quedar tancat per amunt i per avall igual, no
+      només per avall.
+   3. padding-top i padding-bottom passen de --space-2 (8px) tots dos a
+      un parell explícitament calibrat: el text d'un enllaç no queda
+      centrat de debò amb padding simètric perquè align-items:baseline
+      (a .detail-nav) alinea per la línia de base tipogràfica, no per
+      la caixa completa del glif — la lletra "porta" un pèl més d'aire
+      visual per sota (el descendent invisible) que per sobre. Es
+      compensa amb un padding-top lleugerament més gran que el
+      padding-bottom perquè el resultat es vegi centrat a ull, no
+      perquè ho sigui numèricament.
+   4. margin-bottom: 20px afegit sota la nav (a més del padding-bottom
+      de dalt), perquè hi hagi un respir clar abans de "QÜESTIÓ N" —
+      petició amb valor exacte en px, no en un token de --space-*,
+      perquè és una mida puntual d'aquesta transició concreta.
+
+  BUG REAL TROBAT I CORREGIT (no era caché — v. LESSONS.md, quart acte
+  de la mateixa saga de "?v=N"): aquest bloc es va escriure originalment
+  ABANS de .detail-nav en aquest mateix fitxer. L'element porta totes
+  dues classes alhora (class="detail-nav detail-nav--top"), i amb la
+  MATEIXA especificitat (una sola classe cada regla), quan dues regles
+  toquen la mateixa propietat guanya la que apareix DESPRÉS al full —
+  no la classe més "específica" semànticament, l'ordre físic del text.
+  Amb .detail-nav--top abans, les seves pròpies declaracions de
+  margin-top, padding-top i border-top quedaven silenciosament
+  sobreescrites per les de .detail-nav, que venia després. border-top
+  coincidia per casualitat en valor final (per això semblava que
+  "una part sí funcionava"), però margin-top i padding-top no — d'aquí
+  que els punts 1 i 2 de dalt mai arribessin a aplicar-se al navegador,
+  mentre que margin-bottom (que .detail-nav no defineix, així que no hi
+  havia res per sobreescriure-la) sí. Solució: aquest bloc ara viu
+  DESPRÉS de .detail-nav al full, així que la cascada normal ja fa la
+  feina sense necessitat de cap !important ni d'inflar l'especificitat
+  del selector. Si mai cal tornar a tocar aquesta parella de regles:
+  la variant (--top) SEMPRE ha d'anar després de la regla base al
+  full font, no abans — independentment de quin ordre sembli més
+  "lògic" de llegir.
+*/
+.detail-nav--top {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--paper);
+  margin-top: calc(-0.8 * var(--space-6));
+  margin-bottom: 20px;
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-top: var(--stroke-hairline) solid var(--rule);
+  border-bottom: var(--stroke-hairline) solid var(--rule);
+}
+
+@media (max-width: 640px) {
+  .detail-nav--top {
+    margin-top: calc(-0.8 * var(--space-5));
+  }
+}
+
+.detail-nav__back {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  color: var(--ink-soft);
+}
+
+.detail-nav__adjacent {
+  display: flex;
+  gap: var(--space-5);
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+}
+
+.detail-nav__adjacent a,
+.detail-nav__back {
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--dur-fast) var(--ease-settle);
+}
+
+.detail-nav__adjacent a:hover,
+.detail-nav__back:hover {
+  border-bottom-color: currentColor;
+}
+
+/* Marcador "explorat" a la vista de detall (equivalent al punt de la
+   llista, però amb text explícit perquè aquí l'alumne hi passa més
+   temps i val la pena que sigui llegible, no només un punt de color). */
+.done-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  letter-spacing: var(--tracking-mono);
+}
+
+.done-toggle input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--pencil);
+}
+
+/* ---------- Graella de dues imatges (cas imatge.fitxers, p. ex. q40_implicit) ---------- */
+
+.question-entry__figure-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.question-entry__figure-group .question-entry__figure {
+  flex: 1 1 12rem;
+  margin-top: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   GUIA DE DEMOSTRACIÓ (escala de pistes)
+   
+   Aparença deliberadament SÒBRIA: tot el color de la guia viu dins dels
+   PNG (la sanguina #b0453a de les construccions). Si la interfície també
+   fes servir aquest to, la sanguina deixaria de significar "això ho
+   afegeixes tu" i passaria a ser simplement "el color de la secció de
+   pistes", que és precisament la distinció que les figures existeixen per
+   ensenyar. Per això aquí només s'usen --pencil i els grisos del paper.
+   
+   NOTA DE PALETA: tokens.css diu explícitament que s'evita "qualsevol to
+   proper al terracota". Les figures de guia el fan servir (sanguina), però
+   només DINS de la imatge i mai com a color d'interfície, de manera que la
+   regla del document es manté allà on es va escriure: als elements del
+   lloc.
+   ───────────────────────────────────────────────────────────────────── */
+
+.guia {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+  max-width: var(--measure);
+}
+
+.guia__header { margin-bottom: var(--space-4); }
+
+.guia__title {
+  font-family: var(--font-serif);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* OCULT A PROPÒSIT (petició ago. 2026): el nom del moviment ("El moviment:
+   posa a prova la teva pròpia demostració") es continua generant a
+   detall.js i llegint de guies-dades.js — no s'ha tocat res d'això — però
+   de moment no es mostra a l'alumne. Reactivar-ho és treure aquesta regla;
+   no cal tocar cap altre fitxer. */
+.guia__move {
+  display: none;
+  font-family: var(--font-serif);
+  font-size: var(--fs-body);
+  font-style: italic;
+  color: var(--ink);
+  margin: var(--space-2) 0 0;
+}
+
+/* Els passos porten numeració pròpia (la "Pista N" del títol), així que la
+   dels <li> sobra i duplicaria el número. */
+.guia__steps { list-style: none; margin: 0; padding: 0; }
+
+.guia__step {
+  margin-bottom: var(--space-5);
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--rule);
+}
+
+/* El nivell 2 és la figura: l'únic que es marca, perquè és el gir de
+   l'escala i ha de ser localitzable d'una ullada quan es torna enrere. */
+.guia__step--n2 { border-left-color: var(--pencil-soft); }
+
+.guia__step-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  letter-spacing: var(--tracking-mono);
+  color: var(--ink-faint);
+  margin: 0 0 var(--space-2);
+}
+
+.guia__text {
+  font-family: var(--font-serif);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--ink);
+  margin: 0 0 var(--space-3);
+}
+
+.guia__figure { margin: var(--space-4) 0 0; }
+
+/* multiply: mateix motiu que a les figures del llibre — el blanc del PNG
+   desapareix i el traç es fon amb el crema del paper (v. base.css). */
+.guia__figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  mix-blend-mode: multiply;
+}
+
+.guia__reveal {
+  font-family: var(--font-serif);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  color: var(--ink);
+  /* Un pas més fosc que --paper-raised, perquè el botó destaqui més
+     (petició ago. 2026). No hi ha cap token per a "un pas més fosc que
+     paper-raised", així que es deriva d'--ink en lloc d'inventar un color
+     nou: color-mix() barreja un 12% d'--ink dins --paper-raised, i com que
+     tots dos ja canvien junts amb el mode fosc, el resultat s'hi adapta
+     sol. Fallback --rule-strong per a navegadors sense color-mix()
+     (Chromebooks més antics inclosos) — és més fosc que paper-raised però
+     no tant com el resultat final, així que mai queda pitjor, només menys
+     marcat. */
+  background: var(--rule-strong);
+  background: color-mix(in srgb, var(--paper-raised) 88%, var(--ink) 12%);
+  border: 2px solid var(--rule-strong);
+  border-radius: 2px;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  margin-top: var(--space-2);
+}
+.guia__reveal:hover { border-color: var(--pencil); color: var(--pencil); }
+.guia__reveal:focus-visible { outline: 2px solid var(--pencil); outline-offset: 2px; }
+
+.guia__footer {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px dashed var(--rule);
+}
+
+.guia__subtitle {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 var(--space-2);
+}
+
+.guia__check { margin-bottom: var(--space-4); }
+
+/* ==========================================================================
+   Glossari (GLOSSARY-DESIGN-NOTES.md) — dues superfícies, un sol estil
+   ========================================================================== */
+
+/* ---------- Botó a la capçalera (§4.1) ---------- */
+
+.glossari-obre {
+  border: var(--stroke-hairline) solid var(--rule-strong);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: var(--font-serif);
+  font-size: var(--fs-metadata);
+  padding: var(--space-1) var(--space-3);
+  white-space: nowrap;
+  transition: border-color var(--dur-fast) var(--ease-settle),
+    color var(--dur-fast) var(--ease-settle);
+}
+.glossari-obre:hover { border-color: var(--pencil-soft); color: var(--ink); }
+.glossari-obre:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* ---------- Overlay (§4.1, §6: mai per location.hash) ---------- */
+
+.glossari-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(33, 30, 27, 0.35);
+  display: flex;
+  justify-content: flex-end;
+}
+/*
+  Bug real trobat en provar-ho: [hidden] del navegador (display:none) i
+  aquesta mateixa regla (display:flex) tenen la MATEIXA especificitat
+  (0,0,1,0 totes dues -- un selector d'atribut i un de classe), i com que
+  aquesta viu més avall al full d'estils que la fulla per defecte del
+  navegador, GUANYAVA ELLA: l'overlay quedava "amagat" visualment (opacitat
+  normal, però mai --era-- realment display:none) i seguia interceptant
+  clics per sota. Cal la regla explícita següent perquè [hidden] torni a
+  guanyar sempre, sigui quin sigui l'ordre de càrrega dels fulls d'estil.
+*/
+.glossari-overlay[hidden] {
+  display: none;
+}
+
+.glossari-panell {
+  width: min(26rem, 100vw);
+  height: 100%;
+  background: var(--paper);
+  border-left: var(--stroke-rule) solid var(--rule-strong);
+  overflow-y: auto;
+  padding: var(--space-5);
+}
+
+@media (max-width: 640px) {
+  .glossari-panell { width: 100vw; padding: var(--space-4); }
+}
+
+.glossari-panell__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--stroke-hairline) solid var(--rule);
+}
+.glossari-panell__header h2 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.glossari-tancar,
+.glossari-tornar {
+  background: transparent;
+  border: none;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  letter-spacing: var(--tracking-mono);
+  cursor: pointer;
+  padding: var(--space-1);
+}
+.glossari-tancar:hover,
+.glossari-tornar:hover { color: var(--pencil); }
+.glossari-tornar { margin-bottom: var(--space-4); }
+
+.glossari-cerca {
+  width: 100%;
+  font-family: var(--font-serif);
+  font-size: var(--fs-body);
+  color: var(--ink);
+  background: var(--paper-raised);
+  border: var(--stroke-hairline) solid var(--rule-strong);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.glossari-cerca:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.glossari-categoria {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: var(--space-4) 0 var(--space-2);
+}
+.glossari-categoria:first-child { margin-top: 0; }
+
+.glossari-llista__items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.glossari-llista__item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-bottom: var(--stroke-hairline) solid var(--rule);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: var(--fs-body);
+  padding: var(--space-2) 0;
+  cursor: pointer;
+}
+.glossari-llista__item:hover { color: var(--pencil); }
+
+.glossari-buit { color: var(--ink-soft); }
+
+/* ---------- Contingut d'un terme (compartit: overlay + popover inline) --- */
+
+.glossari-entry__title {
+  font-size: 1.1rem;
+  margin: 0 0 var(--space-3);
+  font-style: italic;
+}
+.glossari-entry__def {
+  color: var(--ink);
+  max-width: var(--measure);
+  margin: 0 0 var(--space-3);
+}
+.glossari-entry__figure {
+  margin: var(--space-3) 0;
+}
+.glossari-entry__figure img {
+  max-width: 100%;
+  height: auto;
+  mix-blend-mode: multiply;
+}
+.glossari-entry__relacionats {
+  font-size: var(--fs-metadata);
+  color: var(--ink-soft);
+}
+.glossari-entry__relacionats-label {
+  margin-right: var(--space-2);
+}
+.glossari-entry__relacionat {
+  background: transparent;
+  border: none;
+  color: var(--pencil);
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2) var(--space-1) 0;
+  margin-right: var(--space-2);
+}
+.glossari-entry__relacionat:hover { color: var(--ink); }
+
+/* ---------- Terme invocat inline dins d'un enunciat (§4.2) ---------- */
+
+.glossari-term-wrap {
+  position: relative;
+}
+
+/* Subratllat de terme clicable: guionets petits, no punts. Un
+   border-bottom:dotted a --stroke-rule (1.5px) es renderitza com a punts
+   massa fins per llegir-se com "aquí hi ha alguna cosa clicable" —
+   reportat explícitament per l'usuari. Un background-image amb
+   repeating-linear-gradient dona control exacte sobre la mida del
+   guionet i el buit (a diferència de border-style:dashed, que cada
+   navegador interpreta de manera diferent i a 1.5px sol quedar igual de
+   subtil que dotted). */
+.glossari-term {
+  background-color: transparent;
+  background-image: linear-gradient(to right, var(--pencil-soft) 0 60%, transparent 60% 100%);
+  background-position: 0 100%;
+  background-repeat: repeat-x;
+  background-size: 6px var(--stroke-rule);
+  border: none;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+  padding: 0 0 2px;
+}
+.glossari-term:hover,
+.glossari-term[aria-expanded="true"] {
+  background-image: linear-gradient(to right, var(--pencil) 0 60%, transparent 60% 100%);
+  color: var(--pencil);
+}
+.glossari-term:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.glossari-popover {
+  position: absolute;
+  z-index: 10;
+  top: 100%;
+  left: 0;
+  margin-top: var(--space-2);
+  width: max(18rem, min(24rem, 90vw));
+  background: var(--paper-raised);
+  border: var(--stroke-hairline) solid var(--rule-strong);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  font-weight: 400;
+  font-size: var(--fs-body);
+  box-shadow: 0 4px 16px rgba(33, 30, 27, 0.12);
+}
+.glossari-popover .glossari-entry__title { font-size: 1rem; }
+
+/* ==========================================================================
+   Itinerari (ITINERARY-DESIGN-NOTES.md) — valoració, suggerit, continua
+   ========================================================================== */
+
+.valoracio {
+  margin-top: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.valoracio__prompt {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  color: var(--ink-soft);
+  margin-right: var(--space-1);
+}
+.valoracio__opcio {
+  border: var(--stroke-hairline) solid var(--rule-strong);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: var(--font-serif);
+  font-size: var(--fs-metadata);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-settle),
+    color var(--dur-fast) var(--ease-settle);
+}
+.valoracio__opcio:hover { border-color: var(--pencil-soft); color: var(--ink); }
+.valoracio__opcio[aria-pressed="true"] {
+  border-color: var(--pencil);
+  color: var(--pencil);
+  font-weight: 600;
+}
+.valoracio__opcio:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/*
+  "Suggerit per a tu": al costat de detail-nav, no en lloc seu (§7) --
+  visualment una mica més present (vora esquerra de color) perquè es
+  distingeixi de la navegació posicional, sense competir-hi en pes.
+*/
+.suggerit {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  padding-left: var(--space-4);
+  border-top: var(--stroke-hairline) solid var(--rule);
+  border-left: var(--stroke-rule) solid var(--pencil-soft);
+}
+.suggerit__title {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 var(--space-3);
+}
+.suggerit__items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.suggerit__link {
+  color: var(--ink);
+  text-decoration: none;
+}
+.suggerit__link:hover { color: var(--pencil); }
+.suggerit__link:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.suggerit__id {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  color: var(--pencil);
+  margin-right: var(--space-2);
+}
+
+/* Banner "continua on ho vas deixar" a la llista (§7) */
+.continua-banner {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  color: var(--ink-soft);
+  margin: 0 0 var(--space-3);
+}
+.continua-banner a {
+  color: var(--pencil);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.continua-banner a:hover { color: var(--ink); }
+
+/* ==========================================================================
+   Demo "què és una demostració" (DEMO-PROOF-INTRO-DESIGN-NOTES.md)
+   ========================================================================== */
+
+.demo-obre {
+  border: var(--stroke-hairline) solid var(--rule-strong);
+  border-radius: var(--radius-md);
+  color: var(--ink-soft);
+  font-family: var(--font-serif);
+  font-size: var(--fs-metadata);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-3);
+  white-space: nowrap;
+  transition: border-color var(--dur-fast) var(--ease-settle),
+    color var(--dur-fast) var(--ease-settle);
+}
+.demo-obre:hover { border-color: var(--pencil-soft); color: var(--ink); }
+.demo-obre:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.demo__page-title {
+  font-size: 1.75rem;
+  margin: var(--space-2) 0 var(--space-3);
+}
+.demo__intro {
+  max-width: var(--measure);
+  color: var(--ink-soft);
+  margin-bottom: var(--space-6);
+}
+
+.demo {
+  max-width: var(--measure);
+  padding-top: var(--space-6);
+  border-top: var(--stroke-rule) solid var(--rule-strong);
+}
+.demo + .demo { margin-top: var(--space-6); }
+
+.demo__title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--fs-question);
+  line-height: var(--lh-question);
+  margin: 0 0 var(--space-4);
+}
+
+.demo__context {
+  margin-bottom: var(--space-4);
+  font-size: var(--fs-body-lg);
+  color: var(--ink);
+}
+.demo__context p { margin: 0 0 var(--space-3); }
+
+.demo__steps { list-style: none; margin: 0; padding: 0; }
+
+.demo__step {
+  margin-bottom: var(--space-5);
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--rule);
+}
+.demo__step--close { border-left-color: var(--pencil-soft); }
+
+.demo__step-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 var(--space-2);
+}
+
+.demo__try {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--paper-raised);
+  border-radius: 2px;
+}
+.demo__try-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--pencil);
+  margin: 0 0 var(--space-2);
+}
+.demo__try-text { margin: 0; color: var(--ink); }
+
+.demo__check {
+  margin-top: var(--space-4);
+  padding-left: var(--space-4);
+  border-left: var(--stroke-rule) solid var(--pencil-soft);
+}
+.demo__check-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 var(--space-2);
+}
+.demo__check-text { margin: 0; color: var(--ink); font-style: italic; }
+
+.demo__reveal {
+  font-family: var(--font-serif);
+  font-size: var(--fs-body);
+  color: var(--ink);
+  background: var(--paper-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  margin-top: var(--space-2);
+}
+.demo__reveal:hover { border-color: var(--pencil); color: var(--pencil); }
+.demo__reveal:focus-visible { outline: 2px solid var(--pencil); outline-offset: 2px; }
+
+.demo__text { margin: 0 0 var(--space-3); }
+/* OCULT A PROPÒSIT (petició ago. 2026), igual que .guia__move a dalt: es
+   continua generant a demo.js — no s'ha tocat res d'això — però de moment
+   no es mostra. Reactivar-ho és treure aquesta regla. */
+.demo__move {
+  display: none;
+  font-style: italic;
+  color: var(--pencil);
+  margin: 0 0 var(--space-2);
+}
+
+.demo__figure {
+  margin: var(--space-4) 0;
+}
+.demo__figure img {
+  max-width: 100%;
+  height: auto;
+  mix-blend-mode: multiply;
+}
+
+.demo__handoff {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  background: var(--paper-raised);
+  border-radius: var(--radius-md);
+}
+.demo__handoff-text { color: var(--ink); margin: 0 0 var(--space-3); }
+.demo__handoff-link {
+  display: inline-block;
+  color: var(--pencil);
+  font-weight: 600;
+  text-decoration: none;
+}
+.demo__handoff-link:hover { text-decoration: underline; }
+.demo__handoff-link:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.demo__tancament {
+  max-width: var(--measure);
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: calc(var(--stroke-rule) * 2) solid var(--ink);
+}
+.demo__tancament-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--fs-question);
+  line-height: var(--lh-question);
+  margin: 0 0 var(--space-4);
+}
+.demo__tancament-text { margin: 0 0 var(--space-3); color: var(--ink); }
+
+.demo__back {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: var(--stroke-hairline) solid var(--rule);
+}
+.demo__back a { color: var(--ink-soft); text-decoration: none; }
+.demo__back a:hover { color: var(--pencil); }
+
+/* ==========================================================================
+   Itineraris temàtics (v. docs/ITINERARIS-TEMATICS-DESIGN-NOTES.md).
+   Reaprofita el vocabulari visual ja existent:
+   .demo-obre per al botó del header, .suggerit per als blocs
+   "relacionat amb aquesta pregunta", .continua-banner com a base per a
+   .itinerari-actiu -- cap component nou de disseny, només nous noms de
+   classe sobre patrons que ja hi eren (v. LESSONS §5).
+   ========================================================================== */
+
+/* Enllaç del header, calcat de .demo-obre (v. main.js:
+   muntaEnllacItineraris) */
+.itineraris-obre {
+  border: var(--stroke-hairline) solid var(--rule-strong);
+  border-radius: var(--radius-md);
+  color: var(--ink-soft);
+  font-family: var(--font-serif);
+  font-size: var(--fs-metadata);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-3);
+  white-space: nowrap;
+  transition: border-color var(--dur-fast) var(--ease-settle),
+    color var(--dur-fast) var(--ease-settle);
+}
+.itineraris-obre:hover { border-color: var(--pencil-soft); color: var(--ink); }
+.itineraris-obre:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Targeta d'entrada a la llista general (llista.js, sota la capçalera
+   de filtres, abans de la llista de preguntes). Un únic bloc-enllaç,
+   mateix "llom" a l'esquerra que .suggerit fa servir per marcar-se com
+   a contingut relacionat però no principal. */
+.itineraris-entrada {
+  display: block;
+  margin: var(--space-5) 0;
+  padding: var(--space-4);
+  padding-left: var(--space-4);
+  border-left: var(--stroke-rule) solid var(--pencil-soft);
+  background: var(--paper-raised);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  text-decoration: none;
+  transition: background var(--dur-fast) var(--ease-settle);
+}
+.itineraris-entrada:hover { background: var(--paper); }
+.itineraris-entrada:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.itineraris-entrada__title {
+  display: block;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--fs-question);
+  line-height: var(--lh-question);
+  color: var(--ink);
+}
+.itineraris-entrada__body {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--ink-soft);
+  max-width: var(--measure);
+}
+.itineraris-entrada__link {
+  display: inline-block;
+  margin-top: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  color: var(--pencil);
+}
+
+/* "← Totes les preguntes" / "← Tots els itineraris" -- calcat de
+   .demo__back */
+.itineraris-nav-back {
+  margin-bottom: var(--space-5);
+}
+.itineraris-nav-back a { color: var(--ink-soft); text-decoration: none; }
+.itineraris-nav-back a:hover { color: var(--pencil); }
+
+.itineraris__page-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--fs-question);
+  line-height: var(--lh-question);
+  margin: var(--space-2) 0 var(--space-3);
+}
+.itineraris__intro {
+  max-width: var(--measure);
+  color: var(--ink-soft);
+  margin: 0 0 var(--space-6);
+}
+
+/* Llista de targetes a #itineraris -- mateix .question-list de base.css
+   com a base d'espaiat vertical (v. base.css), sense el numerador de
+   .question-entry perquè aquí cada fila és un itinerari sencer, no una
+   pregunta. */
+.itinerari-card-list {
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.itinerari-card + .itinerari-card {
+  border-top: var(--stroke-hairline) solid var(--rule);
+}
+.itinerari-card__link {
+  display: block;
+  padding: var(--space-4) 0;
+  text-decoration: none;
+  transition: background var(--dur-fast) var(--ease-settle);
+}
+.itinerari-card__link:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.itinerari-card__title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--fs-question);
+  line-height: var(--lh-question);
+  color: var(--ink);
+  margin: 0 0 var(--space-2);
+}
+.itinerari-card__link:hover .itinerari-card__title { color: var(--pencil); }
+.itinerari-card__meta {
+  margin: 0;
+}
+
+/* Bloc "abans convé haver fet: qXX" dins d'una entrada de #itinerari-<clau>.
+   BUG CORREGIT: cada .itinerari-entry és una .question-entry (base.css),
+   que porta un .question-entry__link-cover a inset:0 amb z-index:1 per
+   fer clicable tota l'entrada (v. capçalera d'aquella regla,
+   components.css:151) -- l'enllaç a qXX d'aquí sota queda just per sota
+   d'aquell cover en l'ordre normal de pintat, així que el clic sempre
+   queia sobre el cover i portava a LA PRÒPIA entrada, mai a qXX. Calen
+   position:relative + z-index per damunt del cover (2 > 1) al contenidor
+   .itinerari-entry__requereix sencer, no només a l'enllaç <a>: un z-index
+   sense position no té cap efecte, i si només es posa a <a> (elements
+   inline) alguns navegadors el continuen posant per sota del cover en
+   calcular l'stacking context del pare no posicionat. */
+.itinerari-entry__requereix {
+  position: relative;
+  z-index: 2;
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  color: var(--ink-faint);
+}
+.itinerari-entry__requereix-label { color: var(--ink-soft); }
+.itinerari-entry__requereix a { color: var(--pencil); text-decoration: none; }
+.itinerari-entry__requereix a:hover { text-decoration: underline; }
+
+/* "Següent en aquest itinerari" a detall.js -- mateixa família visual
+   que .continua-banner (llista.js), reaprofitada aquí en lloc de crear
+   un tercer patró de "banner amb enllaç" al projecte. */
+.itinerari-actiu {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  padding-left: var(--space-4);
+  border-top: var(--stroke-hairline) solid var(--rule);
+  border-left: var(--stroke-rule) solid var(--pencil-soft);
+}
+.itinerari-actiu__title {
+  font-family: var(--font-mono);
+  font-size: var(--fs-metadata);
+  letter-spacing: var(--tracking-mono);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 var(--space-2);
+}
+.itinerari-actiu__link {
+  color: var(--pencil);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.itinerari-actiu__link:hover { color: var(--ink); }
+.itinerari-actiu__link:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.itinerari-actiu__done {
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* .bessones reaprofita .suggerit sencer (v. detall.js: pintaBessones
+   afegeix "suggerit bessones" com a className) -- cap regla pròpia
+   necessària, aquest selector només queda de constància documental que
+   la classe existeix i és intencional, no un oblit. */

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les tangents a una esfera: totes iguals per un mateix argument — Solució — Geometria</title>
+<meta name="description" content="Per què totes les tangents d'un punt exterior a una esfera fan la mateixa longitud, via un triangle rectangle que no depèn de quin punt de tangència es triï.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../css/tokens.css?v=5">
+<link rel="stylesheet" href="../css/base.css?v=5">
+<link rel="stylesheet" href="../css/components.css?v=5">
+<link rel="stylesheet" href="sol.css?v=1">
+</head>
+<body>
+
+<header class="sol-header">
+  <span class="eyebrow">Qüestió 93 · pàg. 143 del llibre · solució</span>
+  <h1 class="sol-header__title">Les tangents a una esfera: totes iguals per un mateix argument</h1>
+</header>
+
+<section class="sol-enunciat">
+  <p class="question-entry__prompt">Per què totes les tangents d'un punt donat a una esfera tenen la mateixa longitud?</p>
+  <div class="sol-enunciat__figures sol-enunciat__figures--single"><figure class="question-entry__figure"><div class="question-entry__figure-frame"><img src="../assets/img/q93_page143_sphere_tangents.png" alt="Figura de l'enunciat de la Qüestió 93" loading="lazy"></div></figure></div>
+</section>
+
+<section class="solucio">
+  <div class="solucio__marc">
+    <span class="solucio__eyebrow">Solució</span>
+    <div class="solucio__pas"><p class="solucio__pas-titol">Què hem de produir</p><p class="solucio__text">Un argument que valgui per a qualsevol de les infinites rectes tangents des d'un mateix punt exterior —no la comprovació d'un sol cas.</p></div><div class="solucio__pas"><p class="solucio__pas-titol">El radi i la tangent són perpendiculars</p><p class="solucio__text">Igual que en un cercle —és el que es demostra a la Qüestió 95—, el radi que va del centre al punt de tangència és perpendicular a la recta tangent en aquell punt. En tres dimensions continua valent, i per la mateixa raó: com que la recta tangent toca l'esfera només a T, aquest és el punt de la recta més proper al centre, i el segment més curt d'un punt a una recta hi és perpendicular. Amb el centre O, el punt exterior P i un punt de tangència T qualsevol, l'angle del triangle OPT al vèrtex T és, doncs, recte.</p></div><div class="solucio__pas"><p class="solucio__pas-titol">La construcció</p><p class="solucio__text">Dos punts de tangència diferents, T₁ i T₂, cadascun formant el seu propi triangle amb O i P.</p><figure class="solucio__figura"><img src="../assets/img/pistes/fig-101.png" alt="Figura de la construcció — el centre O, el punt exterior P, i dos punts de tangència T1 i T2 amb els seus triangles rectangles" loading="lazy"><figcaption class="solucio__figura-nota">Els triangles OPT₁ i OPT₂: tots dos rectangles en T, amb la mateixa hipotenusa OP i el mateix catet OT (el radi).</figcaption></figure></div><div class="solucio__pas"><p class="solucio__pas-titol">Tancar-ho</p><p class="solucio__text">El triangle OPT és rectangle en T, amb hipotenusa OP —fixa, la distància del punt exterior al centre— i un catet OT —el radi, també fix. Pitàgores dona l'altre catet PT en termes només d'OP i del radi: PT = √(OP² − radi²) —cap referència a quin punt de tangència T és. Com que OP i el radi són els mateixos per a totes les tangents, PT també ho és.</p></div>
+    <div class="solucio__resultat">
+      <span class="solucio__resultat-eyebrow">En resum</span>
+      <p class="solucio__resultat-text">Totes les tangents des d'un mateix punt exterior a una esfera tenen la mateixa longitud, √(OP² − radi²), perquè aquesta fórmula no depèn de quin punt de tangència es triï —només de la distància OP i del radi, que són els mateixos per a totes.</p>
+    </div>
+    <div class="solucio__pas"><p class="solucio__pas-titol">Comprovació</p><p class="solucio__text">Distància del punt exterior al centre: 10. Radi de l'esfera: 6. Longitud de qualsevol tangent: √(10²−6²) = √64 = 8, la mateixa per a totes.</p><p class="solucio__text">El mateix argument, amb el mateix triangle rectangle, val paraula per paraula per a les dues tangents des d'un punt a un cercle en 2D. El quadern no ho demana enlloc com a qüestió a part, però és el mateix teorema una dimensió més avall. En passar a tres dimensions no canvia res essencial: només cal veure que O, P i T mai no estan alineats —l'angle a T és recte i el triangle no pot degenerar— i que per tant hi ha un pla que els conté, dins del qual tot passa com al pla de sempre.</p><p class="solucio__text">Val la pena mirar què diu això de la figura sencera. Els punts de tangència no estan escampats de qualsevol manera per l'esfera: són tots a la mateixa distància de P i, alhora, tots a la mateixa distància d'O. Formen, doncs, una circumferència —la mateixa que es veu com a contorn quan s'il·lumina una pilota des d'un punt.</p></div>
+  </div>
+</section>
+
+<footer class="sol-footer">
+  <p>Solució redactada a partir de les quatre pistes de la guia d'aquest exercici — geometria, llibre complet.</p>
+</footer>
+
+</body>
+</html>

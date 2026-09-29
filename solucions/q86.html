@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El cas ambigu: dos costats i un angle no basten — Solució — Geometria</title>
+<meta name="description" content="Un contraexemple que demostra per què conèixer dos costats i un angle no comprès (SSA) no determina un triangle únic, a diferència del cas SAS.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../css/tokens.css?v=5">
+<link rel="stylesheet" href="../css/base.css?v=5">
+<link rel="stylesheet" href="../css/components.css?v=5">
+<link rel="stylesheet" href="sol.css?v=1">
+</head>
+<body>
+
+<header class="sol-header">
+  <span class="eyebrow">Qüestió 86 · pàg. 129 del llibre · solució</span>
+  <h1 class="sol-header__title">El cas ambigu: dos costats i un angle no basten</h1>
+</header>
+
+<section class="sol-enunciat">
+  <p class="question-entry__prompt">Per què dos costats i un angle no basten, en general, per determinar un triangle?</p>
+  <div class="sol-enunciat__figures sol-enunciat__figures--single"><figure class="question-entry__figure"><div class="question-entry__figure-frame"><img src="../assets/img/fig-167.png" alt="Figura de l'enunciat de la Qüestió 86" loading="lazy"></div></figure></div>
+</section>
+
+<section class="solucio">
+  <div class="solucio__marc">
+    <span class="solucio__eyebrow">Solució</span>
+    <div class="solucio__pas"><p class="solucio__pas-titol">Quin angle exactament</p><p class="solucio__text">Aquí "un angle" vol dir un angle que <strong>no</strong> és l'angle entre els dos costats donats. Si ho fos, seria el cas costat-angle-costat (SAS), i aquell sí que determina el triangle de manera única —tota la dificultat de la pregunta és aquesta distinció.</p></div><div class="solucio__pas"><p class="solucio__pas-titol">Fixar el que es pot fixar</p><p class="solucio__text">Un angle a un vèrtex A i un dels costats donats sortint d'A cap a un punt B ja fixen A i B del tot. L'altre costat donat té una longitud fixa, però només se sap que el seu altre extrem C és <strong>en algun lloc</strong> del segon costat de l'angle —no es coneix encara on.</p><figure class="solucio__figura"><img src="../assets/img/pistes/fig-202.png" alt="Figura de la construcció — Fixar el que es pot fixar" loading="lazy"><figcaption class="solucio__figura-nota">Un arc de radi fix, centrat a B, tallant el segon costat de l'angle.</figcaption></figure></div><div class="solucio__pas"><p class="solucio__pas-titol">Quantes vegades talla l'arc</p><p class="solucio__text">Clavant un compàs a B amb aquella longitud fixa i traçant l'arc, aquest pot tallar el segon costat de l'angle en <strong>dos</strong> punts diferents —no en un de sol en general. Hi ha tres maneres que en quedi només un, i convé distingir-les: que l'arc no hi arribi (radi massa curt, cap solució), que hi sigui tangent (cas límit, triangle rectangle), o que el radi superi el costat AB, cas en què el segon tall cau a l'altra banda del vèrtex A i no dona cap triangle amb l'angle demanat.</p><figure class="solucio__figura"><img src="../assets/img/pistes/fig-016.png" alt="Figura de la construcció — Quantes vegades talla l'arc" loading="lazy"><figcaption class="solucio__figura-nota">L'arc talla el segon costat en dos punts, C i C'. Les marquetes confirmen BC=BC': dues solucions vàlides amb les mateixes dades.</figcaption></figure></div><div class="solucio__pas"><p class="solucio__pas-titol">Dos triangles, mateixes dades de partida</p><p class="solucio__text">Els dos triangles ABC i ABC' comparteixen l'angle a A, el costat AB, i el costat BC (=BC'). Però són triangles <strong>diferents</strong> —els angles a C i a C' no coincideixen, ni tampoc el costat AC. Amb angle A=30°, AB=8, BC=5 les dues sortides es poden calcular sense cap fórmula nova: la perpendicular de B al segon costat té el peu H a AH=8·cos30°≈6,93 del vèrtex i mesura BH=8·sin30°=4; com que BC=5, Pitàgores dona HC=√(5²−4²)=3. Els dos talls són simètrics respecte de H, i per tant AC≈6,93+3=9,93 o bé AC≈6,93−3=3,93.</p></div>
+    <div class="solucio__resultat">
+      <span class="solucio__resultat-eyebrow">En resum</span>
+      <p class="solucio__resultat-text">No, dos costats i un angle no comprès (SSA) no basten: en general hi ha dos triangles diferents, no congruents entre si, que comparteixen exactament aquestes dades. Els criteris clàssics de congruència són SSS, SAS, ASA i AAS (i hipotenusa-catet per als rectangles); SSA no és cap d'ells, i aquesta qüestió n'és la raó. Això no vol dir que falli sempre: quan l'angle donat és recte o obtús, el costat que se li oposa és el més llarg del triangle, només hi ha un tall vàlid i les dades sí que determinen el triangle. El nom "cas ambigu" es refereix, doncs, al cas d'angle agut amb el costat oposat més curt que l'adjacent conegut, que és el que reapareix en resoldre triangles amb el teorema del sinus.</p>
+    </div>
+    <div class="solucio__pas"><p class="solucio__pas-titol">Comprovació</p><p class="solucio__text">Angle A=30°, AB=8, BC=5: AH=8·cos30°≈6,93, BH=8·sin30°=4, HC=√(25−16)=3, i per tant AC≈9,93 o AC≈3,93 —dues solucions vàlides. Es comprova que totes dues serveixen mesurant BC a cada triangle: ha de sortir 5 als dos. L'ambigüitat és exactament l'arrel quadrada de Pitàgores: si es donés l'angle comprès (SAS), no hi hauria cap arrel a treure i, per tant, cap ±.</p></div>
+  </div>
+</section>
+
+<footer class="sol-footer">
+  <p>Solució redactada a partir de les quatre pistes de la guia d'aquest exercici — geometria, llibre complet.</p>
+</footer>
+
+</body>
+</html>
