@@ -317,6 +317,8 @@ docs/
   *.html                      — fonts de figures (render.js les converteix a PNG)
   comu.js, hand-draw.js       — motor de dibuix a mà alçada i ajudants compartits
   render.js                   — captura els <canvas> d'un .html a PNG
+  playwright-cami.js          — troba el paquet playwright sigui on sigui instal·lat
+  lliuraments/                — notes d'instal·lació de ZIP antics (registre)
   publish_figures.py          — esborra el segell de producció i posa el fons blanc pur
   manifest-figures.tsv        — registre de les 162 figures de guia
   DOCUMENTS-DE-DISSENY.md     — on ha anat a parar cada document de disseny citat al codi
@@ -332,8 +334,17 @@ LLEGEIX-ME.md                 — què fa la prova escrita i com s'hi arriba
 
 Eines de manteniment:
 verifica_projecte.py          — comprovació d'integritat; ha de dir "Tot correcte."
-parse_guies.py                — GUIES-LOT-N.md → js/data/guies-dades.js
+regenera.py                   — refà TOTS els fitxers generats (les quatre línies de sota)
+  parse_guies.py              — GUIES-LOT-N.md → js/data/guies-dades.js
+  genera-solucions-dades.py   — solucions/*.html → js/data/solucions-dades.js
+  build_analitzador_geom.py   — → analitzador-geom.html
+  actualitza_versio_css.py    — el ?v= dels CSS, calculat del seu contingut
+processa_uploads.py           — descomprimeix _uploads/*.zip i aplica _ESBORRA.txt
+tests/smoke.js                — el lloc sencer en un navegador real (Playwright)
 next_figure_number.py         — quin és el proper número de figura lliure
+.github/workflows/
+  unzip-upload.yml            — processa cada ZIP pujat: descomprimeix, regenera, verifica
+  verifica.yml                — verifica cada Pull Request
 ```
 
 Els documents de disseny que les capçaleres del codi citen amb número de
@@ -347,7 +358,41 @@ Per a detalls tècnics de cada decisió de disseny (per què cada fitxer és com
 patrons dels projectes germans es reutilitzen i quins es descarten, i per què), consulta
 `PROJECTES-TECHNICAL-REFERENCE.md`.
 
+## Com arriben els canvis al repositori
+
+El camí habitual és pujar un **ZIP a `_uploads/`** (des de la web de GitHub:
+*Add file → Upload files*). Una GitHub Action (`.github/workflows/unzip-upload.yml`)
+fa tota la resta sola, en uns tres minuts:
+
+1. **descomprimeix** el ZIP sobre l'arrel del repositori, sobreescrivint;
+2. **esborra** els fitxers que demani `_ESBORRA.txt`, si el ZIP en porta un a
+   l'arrel (un camí per línia; `#` per a comentaris). Abans, un ZIP no podia
+   esborrar res (LESSONS.md §4);
+3. **regenera** els fitxers generats (`regenera.py`), inclòs el `?v=` dels CSS;
+4. **verifica** amb `verifica_projecte.py` i amb `tests/smoke.js` (el lloc
+   sencer en un Chromium real);
+5. si tot és correcte, fa **commit a `main`**. Si alguna cosa falla, **`main`
+   no es toca** (només se'n treu el ZIP): el resultat es desa a una branca
+   `upload-revisar/N`, i l'execució surt en vermell.
+
+On mirar-ho: pestanya **Actions** del repositori → l'execució més recent. El
+resum explica què s'ha descomprimit, què s'ha esborrat i el resultat de cada
+comprovació. Si s'ha comprimit la carpeta sencera (`geom-main/...`) en lloc del
+seu contingut, l'Action ho detecta i ho corregeix sola, i ho diu. El que **no**
+pot fer és tocar `.github/` (GitHub no deixa que una Action canviï els seus
+propis workflows): si un ZIP en porta, s'ignora i el resum ho diu.
+
+La mateixa Action s'executa també quan es canvia directament a `main` alguna
+font d'un fitxer generat (per exemple, un CSS editat des de la web): així els
+fitxers generats no queden mai desfasats.
+
+Els **Pull Requests** passen per `.github/workflows/verifica.yml`: fitxers
+generats al dia, `verifica_projecte.py` i `tests/smoke.js` en mode clar i fosc.
+
 ## Regenerar les dades
+
+**Tots els fitxers generats es refan amb una sola ordre:** `python3 regenera.py`
+(la GitHub Action d'uploads ja ho fa sola). El detall de cadascun:
 
 `js/data/preguntes-dades.js` es va generar amb `build_preguntes_dades.py` a
 partir del JSON d'extracció original. **Avís operatiu: aquell script no és en
@@ -396,10 +441,15 @@ està documentada a `docs/HAND_DRAWN_GEOMETRY_TECHNIQUE.md`.
 Abans i després de tocar res, executa des de l'arrel:
 
 ```bash
-python3 verifica_projecte.py
+python3 regenera.py
+python3 verifica_projecte.py     # ha de dir "Tot correcte."
+node tests/smoke.js              # ha de dir "✓ Tot correcte." (uns 2 minuts)
 ```
 
-Ha de dir `Tot correcte.`
+El `?v=` dels fulls d'estil (`index.html` i `solucions/*.html`) **ja no
+s'edita a mà**: és una empremta del contingut dels CSS i el posa
+`actualitza_versio_css.py`. Si el CSS no canvia, no canvia; si canvia, canvia
+sol (v. LESSONS.md §3 per saber per què el número manual fallava).
 
 `docs/manifest-figures.tsv` és el registre de les 162 figures de guia. **Un
 número de figura és permanent**: si una figura es redibuixa, conserva el número.
@@ -470,7 +520,8 @@ professorat (`COORDINACIO-AGENTS-SOLUCIONS.md`), la prova escrita
 (`LLEGEIX-ME.md`), l'auditoria de documentació d'ago. 2026
 (`docs/guies/NOTA-AUDITORIA-DOCUMENTACIO.md`) i les correccions de set. 2026:
 mode fosc, solució de `q88`, figures amb retolat fals i xifres de la
-documentació (`docs/guies/NOTA-CORRECCIONS-SET-2026.md`).
+documentació (`docs/guies/NOTA-CORRECCIONS-SET-2026.md`), i el flux de
+lliurament per ZIP automatitzat (`docs/guies/NOTA-FLUX-ZIP-SET-2026.md`).
 
 <!-- atribucio-centre:inici -->
 

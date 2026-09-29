@@ -1,0 +1,48 @@
+# Verifica cada Pull Request abans que el fusionis a main.
+#
+# Executa les mateixes comprovacions que la Action d'uploads, però sense
+# desar res: només diu si el PR està bé (✅) o no (❌), i per què.
+#   1. els fitxers generats estan al dia (regenera.py no hi ha de canviar res);
+#   2. verifica_projecte.py;
+#   3. tests/smoke.js, el lloc sencer en un Chromium real, en mode clar I fosc.
+
+name: Verifica
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verifica:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 1. Els fitxers generats estan al dia
+        run: |
+          python3 regenera.py
+          if ! git diff --quiet; then
+            echo "::error::Hi ha fitxers generats desfasats. Executa python3 regenera.py i torna a fer commit."
+            git diff --stat
+            exit 1
+          fi
+
+      - name: 2. verifica_projecte.py
+        run: python3 verifica_projecte.py
+
+      - name: 3. tests/smoke.js (mode clar i fosc)
+        run: |
+          npm install --no-save --no-package-lock --silent playwright@1.56.1
+          npx playwright install --with-deps chromium
+          node tests/smoke.js

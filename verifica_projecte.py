@@ -784,6 +784,24 @@ if os.path.exists("js/i18n/ui-strings.js") and _slugs:
             ok("els %d moviments de les guies tenen nom llegible als dos idiomes"
                % len(_slugs))
 
+# ------------------------------------------ 16. ?v= dels fulls d'estil
+# Des del set. 2026 el ?v= no s'escriu a mà: és una empremta del contingut
+# dels CSS que posa actualitza_versio_css.py (LESSONS.md §3 explica per què
+# el número manual fallava). Si algú toca un CSS i no regenera, el
+# navegador de l'alumne pot seguir mostrant l'estil vell.
+if os.path.exists("actualitza_versio_css.py"):
+    import importlib.util as _ilu
+    _spec = _ilu.spec_from_file_location("_avc", "actualitza_versio_css.py")
+    _avc = _ilu.module_from_spec(_spec); _spec.loader.exec_module(_avc)
+    _desf = _avc.comprova()
+    if _desf:
+        err("?v= dels fulls d'estil desfasat a %d fitxers (p. ex. %s): executa "
+            "python3 regenera.py" % (len(_desf), _desf[0]))
+    else:
+        ok("el ?v= dels fulls d'estil correspon al contingut dels CSS")
+else:
+    err("falta actualitza_versio_css.py")
+
 # ------------------------------------------------------------------ informe
 print("\n%d comprovacions passades" % len(oks))
 if avisos:
