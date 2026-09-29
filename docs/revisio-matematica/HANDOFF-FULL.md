@@ -19,7 +19,13 @@ català, com la resta del projecte, perquè el seu destinatari ets tu.
 
 ## Part 1 — El que ja era obert, i com ha quedat
 
-### 1.1 q40, panell 1 — sense canvis
+### 1.1 q40, panell 1 — ✅ TANCAT (set. 2026)
+
+**Tancat a `docs/guies/NOTA-CORRECCIONS-SET-2026.md`:** `fig-059` panell (a)
+redibuixat (quadrat dret inscrit + quadrat petit al damunt), i guia i
+solució reescrites amb t = S/5. El panell (b) ha sortit píxel-idèntic.
+El text de sota és el registre d'abans.
+
 `NOTA-LOT-6.md` §9 deixa constància que el "detall irresoluble" de l'escaneig
 **sí** que es resol: és un quadrat petit recolzat sobre el costat superior d'un
 quadrat inscrit, amb els vèrtexs sobre l'arc, cosa que dona **t = S/5** i una
@@ -103,7 +109,14 @@ Les tres entrades A més rendibles, per si en vols fer només tres:
 
 ## Part 2 — El que ha sortit als trams 12–20
 
-### 2.1 Tres figures amb el retolat imprès, i no són el mateix cas
+### 2.1 Tres figures amb el retolat imprès, i no són el mateix cas — ✅ TOTES TRES TANCADES
+
+**Set. 2026:** `fig-107` i `fig-121` reetiquetades (només el text: la
+geometria ha sortit píxel-idèntica), i el peu i l'`alt` de
+`solucions/q103.html`, que repetien l'error de `fig-107`, corregits. V.
+`docs/guies/NOTA-CORRECCIONS-SET-2026.md`. El text de sota és el registre
+d'abans.
+
 
 Totes tres tenen el problema **dins del PNG**, o sigui que no es poden arreglar
 editant text. Però **dues diuen una cosa falsa i la tercera no**, i la
@@ -203,7 +216,12 @@ Queda un rastre i és una decisió teva: el fitxer d'imatge
 **`049_dilatacio_volum_cub.png`** encara porta la paraula antiga al nom.
 Reanomenar-lo toca l'asset i la referència al lot 4. Petit, però no és cosa meva.
 
-### 2.5 El slug de moviment arriba a la pantalla en cru
+### 2.5 El slug de moviment arriba a la pantalla en cru — ✅ TANCAT (set. 2026)
+
+Secció `moves` de `js/i18n/ui-strings.js` (22 noms, als dos idiomes) +
+`geoContingut.nomMoviment()`; `verifica_projecte.py` comprova que cap
+moviment nou no quedi sense nom. El text de sota és el registre d'abans.
+
 
 Trobat mentre feia l'escombrat, i val la pena que ho sàpigues perquè no és
 evident. `js/ui/detall.js:512` fa:
@@ -234,16 +252,15 @@ Les tres que aquest document prioritzava estan **totes tres tancades**:
 
 **El que queda, per ordre del que jo faria primer:**
 
-1. **`fig-107` i `fig-121`** (§2.1). Són les dues que porten impresa una
-   afirmació falsa; el text ja està corregit i les contradiu.
-2. **q40, panell 1** (§1.1). És l'única altra cosa d'aquest document amb una
-   resposta matemàtica coneguda i no publicada.
+1. ~~**`fig-107` i `fig-121`** (§2.1).~~ ✅ Fet, set. 2026.
+2. ~~**q40, panell 1** (§1.1).~~ ✅ Fet, set. 2026.
 3. **Les tres dependències amagades que queden** (§1.5), amb el mètode de q85:
    mirar primer si la dependència és de veritat necessària.
 
 La resta —q62, l'ordre de presentació, les inversions d'itinerari, el mode
-Byrne, el nom del fitxer `049_dilatacio_...`, el slug a la pantalla— pot esperar
-sense que res es faci malbé.
+Byrne— pot esperar sense que res es faci malbé. (El nom del fitxer
+`049_dilatacio_...` es va canviar al lliurament de l'eina de frases, i el slug
+a la pantalla, al de set. 2026.)
 
 ---
 
